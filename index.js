@@ -47,13 +47,13 @@ const twitchClient = new twitch.Client({
 
 twitchClient.connect();
 
-twitchClient.on('message', (channel, tags, message, self) => {
+twitchClient.on('message', async (channel, tags, message, self) => {
 
   if (self || tags.username.match(/bexxtebot/i)) {
     return;
   }
 
-  const messageResponse = parseMessage('t', {
+  const messageResponse = await parseMessage('t', {
       channel: channel, 
       tags: tags, 
       content: message, 

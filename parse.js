@@ -9,7 +9,7 @@ class Response {
   }
 }
 
-const parseTwitchMessage = message => {
+const parseTwitchMessage = async message => {
 
   /**
    * ORDER
@@ -65,8 +65,11 @@ const parseTwitchMessage = message => {
         case 'mod':
           commandParameters[p] = isMod;
           break;
-        case 'channel':
-          commandParameters[p] = message.channel;
+        case 'argument1':
+          commandParameters[p] = messageWords[1];
+          break;
+        case 'sender':
+          commandParameters[p] = message.tags.username;
           break;
         default:
           throw new Error("Unknown parameter!!");
@@ -75,7 +78,7 @@ const parseTwitchMessage = message => {
 
     // console.log(commandParameters);
 
-    const commandResult = twitchCommands[command].execute(commandParameters);
+    const commandResult = await twitchCommands[command].execute(commandParameters);
 
     // console.log(commandResult);
 
@@ -83,7 +86,7 @@ const parseTwitchMessage = message => {
       return new Response(
         commandResult.modifier,
         commandResult.output,
-        message.channel
+        commandResult.channel
       );
     }
     
