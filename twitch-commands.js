@@ -47,7 +47,8 @@ class TwitchCommand {
       const result = await this.callback(params);
       return result;
     } catch (e) {
-      throw new Error(`Problem executing the ${this.name} command`)
+      console.log(`Problem executing the ${this.name} command`);
+      throw e
     }
   }
 }
@@ -404,6 +405,160 @@ function muteCallback(params) {
   const muteOutput = new CommandResult(`@${ev.CHANNEL_NAME.toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`);
 
   return [muteOutput, muteOutput, muteOutput];
+}
+
+const pitbull = new TwitchCommand('pitbull', pitbullCallback);
+function pitbullCallback(params) {
+  const coinflip = Math.floor(Math.random() * 2);
+
+  if (coinflip === 0) {
+    return new CommandResult('Dale!');
+  } else {
+    return new CommandResult('Believe me, been there done that. But everyday above ground is a great day, remember that.');
+  }
+}
+
+const pride = new TwitchCommand('pride', prideCallback);
+function prideCallback(params) {
+  let emoteString = '';
+  let randNum;
+
+  for (let i = 0; i < 10; i++) {
+    randNum = Math.floor(Math.random() * bexxteConfig.prideEmotes.length);
+    emoteString += bexxteConfig.prideEmotes[randNum] + ' ';
+  }
+
+  return new CommandResult(emoteString);
+}
+
+const raiding = new TwitchCommand('raiding', raidingCallback, 0, true, ['mod', 'argument1']);
+function raidingCallback(params) {
+  let raidingMessage = '';
+
+  switch (params.argument1){
+    case 'cozy':
+      raidingMessage = 'Cozy Raid bexxteCozy bexxteCozy';
+      break;
+    case 'love':
+      raidingMessage = 'Bexxters Raid bexxteLove bexxteLove';
+      break;
+    case 'kiwi':
+      raidingMessage = 'Kindred Kiwi Raid bexxteLove bexxteLove';
+      break;
+    case 'vibe':
+      raidingMessage = 'Bexxters Raid bexxteBop bexxteBop';
+      break;
+    case 'aggro':
+      raidingMessage = 'Bexxters Raid bexxteGun bexxteGun';
+      break;
+    default:
+      raidingMessage = 'The !raiding command can be followed by any of these: cozy, love, kiwi, vibe, aggro';
+      break;
+  }
+
+  return new CommandResult(raidingMessage);
+}
+
+const welcome = new TwitchCommand('welcome', welcomeCallback);
+function welcomeCallback(params) {
+
+  return new CommandResult(
+    'his has bondage to you too owo WELCOME'
+  )
+
+}
+
+const bexxtebot = new TwitchCommand('bexxtebot', bexxtebotCallback);
+function bexxtebotCallback(params) {
+  return new CommandResult(
+    'Hey there everyone, my name is BexxteBot! I am a custom chat bot designed specifically for this channel; if you see me do or say anything crazy, make sure to let @bexxters or @tonichaelmight know so that it can be fixed ASAP. Happy Chatting! bexxteLove'
+  )
+}
+
+const quote = new TwitchCommand('quote', quoteCallback);
+const quoteCatalog = bexxteConfig.quotes;
+function quoteCallback(params) {
+
+  const i = Math.floor(Math.random() * quoteCatalog.length);
+  return new CommandResult(
+    quoteCatalog[i]
+  )
+
+}
+
+const socials = new TwitchCommand('socials', socialsCallback);
+function socialsCallback(params) {
+  return new CommandResult(
+    `Come follow me on these other platforms as well!         
+    Twitter: ${ev.TWITTER}      
+    TikTok: ${ev.TIK_TOK}
+    YouTube: ${ev.YOUTUBE}`
+  )
+}
+
+const youtube = new TwitchCommand('youtube', youtubeCallback);
+function youtubeCallback(params) {
+  return new CommandResult(
+    `Check out edited short plays and full stream uploads over on my Youtube: ${ev.YOUTUBE}`
+  )
+}
+
+const getRandomValidation = () => {
+  return Math.floor(Math.random() * bexxteConfig.validations.length);
+}
+
+const validate = new TwitchCommand('validate', validateCallback, 5000, false, ['mod', 'sender']);
+function validateCallback(params) {
+  let v1, v2, v3;
+
+  v1 = getRandomValidation();
+
+  while (!v2 || v2 === v1) {
+    v2 = getRandomValidation();
+  }
+
+  while (!v3 || v3 === v1 || v3 === v2) {
+    v3 = getRandomValidation();
+  }
+
+  // she gives you three validation phrases
+  return new CommandResult(`@${params.sender}
+      ${bexxteConfig.validations[v1]}
+      ${bexxteConfig.validations[v2]}
+      ${bexxteConfig.validations[v3]}`
+    );
+}
+
+//
+// PEOPLE
+//
+
+const marta = new TwitchCommand('marta', martaCallback, 5000);
+function martaCallback(params) {
+  return new CommandResult(
+    '​Check out (and maybe commission) our UwUest mod and amazing artist Marta over at https://twitter.com/_martuwu or https://martuwuu.carrd.co'
+  )
+}
+
+const tim = new TwitchCommand('tim', timCallback, 5000);
+function timCallback(params) {
+  return new CommandResult(
+    '​my partner of 6 years. person I complain to when my stream randomly dies. pretty cool dude.'
+  )
+}
+
+const michael = new TwitchCommand('michael', michaelCallback, 5000);
+function michaelCallback(params) {
+  return new CommandResult(
+    "Humor King tonichaelmight aka my best friend for over half my life??? we're old."
+  )
+}
+
+const yackie = new TwitchCommand('yackie', yackieCallback, 5000);
+function yackieCallback(params) {
+  return new CommandResult(
+    '​Check out one of my bestest buds and overall cool gal Jackie at twitch.tv/broocat !'
+  )
 }
 
 module.exports = twitchCommands;

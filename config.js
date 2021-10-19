@@ -19,6 +19,34 @@ exports.bexxteConfig = {
     "I did not sext the recruiter.",
     "Oh my god, you stupid roly poly oly motherfucker.",
     "I'M A BUNNY GIRL WITH MY ASS OUT AND I AINT GOT SHIT"
+  ],
+
+  prideEmotes: [
+    'AsexualPride',
+    'BisexualPride',
+    'GayPride',
+    'GenderFluidPride',
+    'LesbianPride',
+    'PansexualPride',
+    'TransgenderPride',
+    'IntersexPride',
+    'NonbinaryPride',
+    'bexxteGpride',
+    'bexxteLpride',
+    'bexxteNBpride',
+    'bexxteApride',
+    'bexxteTpride',
+    'bexxtePpride',
+    'bexxteIpride'
+  ],
+
+  validations: [
+    'You are valid!!',
+      'You matter!',
+      'You are important!',
+      'You are beautiful!',
+      'You a boss ass bitch!',
+      'You\'re doing great sweatie!!'
   ]
 
 }

@@ -66,7 +66,7 @@ const parseTwitchMessage = async message => {
           commandParameters[p] = isMod;
           break;
         case 'argument1':
-          commandParameters[p] = messageWords[1];
+          commandParameters[p] = messageWords[1] || null;
           break;
         case 'sender':
           commandParameters[p] = message.tags.username;

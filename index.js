@@ -1,6 +1,7 @@
 // REQUIRES
 const ev = require('./ev.js'); // environment variables
 const twitch = require('tmi.js'); // twitch tingz
+const { twitchTimer } = require('./timer.js');
 const discord = require('discord.js');
 
 const { parseMessage } = require('./parse.js')
@@ -49,27 +50,47 @@ twitchClient.connect();
 
 twitchClient.on('message', async (channel, tags, message, self) => {
 
-  if (self || tags.username.match(/bexxtebot/i)) {
+  try {
+
+    if (self || tags.username.match(/bexxtebot/i)) {
+      return;
+    }
+
+    const messageResponse = await parseMessage('t', {
+        channel: channel, 
+        tags: tags, 
+        content: message, 
+        self: self
+      });
+
+    if (messageResponse.modifier) {
+      speak(messageResponse);
+    } else {
+      console.log(messageResponse);
+      for (const mesRes of messageResponse) {
+        speak(mesRes);
+      }
+    }
+
     return;
-  }
 
-  const messageResponse = await parseMessage('t', {
-      channel: channel, 
-      tags: tags, 
-      content: message, 
-      self: self
-    });
+  } catch (error) {
+    try {
+      const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' });
+      const datePlusError = `${currentDateAndTime} :: ${error}\n`;
+      fs.appendFile('error.txt', datePlusError, appendError => {
+        if (appendError) throw appendError;
+      });
 
-  if (messageResponse.modifier) {
-    speak(messageResponse);
-  } else {
-    console.log(messageResponse);
-    for (const mesRes of messageResponse) {
-      speak(mesRes);
+      const context = 'encountered an error while reading a message';
+      fs.appendFile('error.txt', context, appendError => {
+        if (appendError) throw appendError;
+      });
+    } catch (innerError) {
+      console.log('an error occurred while trying to log an error :/');
+      console.log(innerError);
     }
   }
-
-  return;
   
 });
 
@@ -89,3 +110,32 @@ discordClient.on('message', message => {
 });
 
 discordClient.login(ev.DISCORD_TOKEN);
+
+
+// ESTABLISH TWITCH TIMER
+const activateTwitchTimer = async () => {
+
+  let command = '';
+  while (true) {
+    command = await twitchTimer.getTimerOutput();
+
+    const messageResponse = await parseMessage('t', {
+      channel: ev.CHANNEL_NAME, 
+      tags: [], 
+      content: '!' + command, 
+      self: false
+    });
+
+    if (messageResponse.modifier) {
+      speak(messageResponse);
+    } else {
+      console.log(messageResponse);
+      for (const mesRes of messageResponse) {
+        speak(mesRes);
+      }
+    }
+  }
+  
+}
+
+activateTwitchTimer();
