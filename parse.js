@@ -82,12 +82,23 @@ const parseTwitchMessage = async message => {
 
     // console.log(commandResult);
 
-    if (commandResult) {
+    if (commandResult.modifier) {
       return new Response(
         commandResult.modifier,
         commandResult.output,
         commandResult.channel
       );
+    } else {
+      let responseOutput = [];
+      for (const comRes of commandResult) {
+        responseOutput.push(new Response(
+          comRes.modifier,
+          comRes.output,
+          comRes.channel
+        ));
+      }
+
+      return responseOutput;
     }
     
   }

@@ -60,8 +60,13 @@ twitchClient.on('message', async (channel, tags, message, self) => {
       self: self
     });
 
-  if (messageResponse) {
+  if (messageResponse.modifier) {
     speak(messageResponse);
+  } else {
+    console.log(messageResponse);
+    for (const mesRes of messageResponse) {
+      speak(mesRes);
+    }
   }
 
   return;
