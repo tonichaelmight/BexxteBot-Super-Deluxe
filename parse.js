@@ -1,11 +1,13 @@
 const ev = require('./ev.js'); // environment variables
 const twitchCommands = require('./twitch-commands.js');
+const { bexxteConfig } = require('./config.js');
 
 class Response {
-  constructor(modifier, output, channel) {
+  constructor(modifier, output, channel, target=null) {
     this.modifier = modifier;
     this.output = output;
     this.channel = channel;
+    this.target = target;
   }
 }
 
@@ -33,18 +35,43 @@ const parseTwitchMessage = async message => {
 
   let parsedMessage = rawMessage.toLowerCase();
 
+  let response;
+
+  if (!isMod) {
+    bexxteConfig.forbidden.forEach(word => { 
+      if (parsedMessage.includes(word)) {
+        response = new Response(
+          'tm',
+          `Naughty naughty, @${message.tags.username}! We don't use that word here`,
+          message.channel,
+          message.tags.username
+        );
+      }
+    });
+  }
+
+  
+
+  if (response) {
+    return response;
+  }
+
   const lurkCheck = /(?<!(\w))!lurk(?!(\w))/;
 
   if (lurkCheck.test(parsedMessage)) {
-    return new Response(
+    response = new Response(
       't', 
       `${message.tags.username} is now lurkin in the chat shadows. Stay awhile and enjoy! bexxteCozy`,
       message.channel
     );
   }
 
+  if (response) {
+    return response;
+  }
+
   if (!parsedMessage.startsWith('!')) {
-    return null;
+    return {};
   }
 
   parsedMessage = parsedMessage.slice(1);
@@ -83,24 +110,26 @@ const parseTwitchMessage = async message => {
     // console.log(commandResult);
 
     if (commandResult.modifier) {
-      return new Response(
+      response = new Response(
         commandResult.modifier,
         commandResult.output,
         commandResult.channel
       );
     } else {
-      let responseOutput = [];
+      response = [];
       for (const comRes of commandResult) {
-        responseOutput.push(new Response(
+        response.push(new Response(
           comRes.modifier,
           comRes.output,
           comRes.channel
         ));
       }
-
-      return responseOutput;
     }
     
+  }
+
+  if (response) {
+    return response;
   }
 
   return null;

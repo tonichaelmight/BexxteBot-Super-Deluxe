@@ -137,7 +137,11 @@ function raidCallback(params) {
 // shoutout
 const so = new TwitchCommand('so', soCallback, 0, true, ['mod', 'argument1', 'sender']);
 function soCallback(params) {
-  const recipient = params.argument1;
+  let recipient = params.argument1;
+
+  if (recipient.startsWith('@')) {
+    recipient = recipient.slice(1);
+  }
 
   if (recipient === ev.CHANNEL_NAME) {
     return new CommandResult(

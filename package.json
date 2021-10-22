@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "config.js": "^0.1.0",
     "discord.js": "^12.5.3",
     "tmi.js": "^1.8.5"
   }

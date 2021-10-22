@@ -1,6 +1,6 @@
 exports.bexxteConfig = {
 
-  playlist: '',
+  playlist: 'https://www.youtube.com/watch?v=xxgxkjV70Vc',
 
   contentWarning: '',
 
@@ -42,11 +42,17 @@ exports.bexxteConfig = {
 
   validations: [
     'You are valid!!',
-      'You matter!',
-      'You are important!',
-      'You are beautiful!',
-      'You a boss ass bitch!',
-      'You\'re doing great sweatie!!'
+    'You matter!',
+    'You are important!',
+    'You are beautiful!',
+    'You a boss ass bitch!',
+    'You\'re doing great sweatie!!'
+  ],
+
+  forbidden: [
+    'reylo',
+    'bigfollows',
+    'chilp.it'
   ]
 
 }

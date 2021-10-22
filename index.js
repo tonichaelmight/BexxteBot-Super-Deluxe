@@ -5,22 +5,23 @@ const { twitchTimer } = require('./timer.js');
 const discord = require('discord.js');
 
 const { parseMessage } = require('./parse.js')
-// const cooldowns = require('./cooldowns.js'); // connects to cooldowns db
-// const { configure } = require('./setup.js'); // connects to setup file
-// const config = require('./config.js'); // links to configuration file
-// const hangman = require('./hangman/hangman.js');
-// const fs = require('fs');
-// const https = require('https');
-
-// const allLetters = new RegExp('[a-zA-Z]');
-// const caps = new RegExp('[A-Z]');
-// const lowers = new RegExp('[a-z]');
+const fs = require('fs');
 
 const speak = (response) => {
-  // console.log(response);
+
+  if (! response || !response.modifier) {
+    return;
+  }
+  
   switch (response.modifier) {
     case 't':
       twitchClient.say(response.channel, response.output);
+      break;
+    case 'tm':
+      twitchClient.timeout(response.channel, response.target, 20, 'used forbidden term');
+      twitchClient.color(response.channel, 'red');
+      twitchClient.say(response.channel, response.output);
+      twitchClient.color(response.channel, 'hotpink');
       break;
     case 'd':
       break;
@@ -65,7 +66,7 @@ twitchClient.on('message', async (channel, tags, message, self) => {
 
     if (messageResponse.modifier) {
       speak(messageResponse);
-    } else {
+    } else if (Array.isArray(messageResponse)) {
       console.log(messageResponse);
       for (const mesRes of messageResponse) {
         speak(mesRes);
@@ -82,8 +83,11 @@ twitchClient.on('message', async (channel, tags, message, self) => {
         if (appendError) throw appendError;
       });
 
-      const context = 'encountered an error while reading a message';
+      const context = 'encountered an error while reading a message\n';
       fs.appendFile('error.txt', context, appendError => {
+        if (appendError) throw appendError;
+      });
+      fs.appendFile('error.txt', error.message + '\n', appendError => {
         if (appendError) throw appendError;
       });
     } catch (innerError) {
