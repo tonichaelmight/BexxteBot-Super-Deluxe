@@ -96,7 +96,7 @@ function bttvCallback(params) {
 const discord = new TwitchCommand('discord', discordCallback);
 function discordCallback(params) {
   return new CommandResult(
-    '​Join the Basement Party and hang out offline here: https://discord.gg/bexxters'
+    '​Join the Basement Party and hang out offline here: https://discord.gg/bexxtenation'
   )
 }
 
@@ -138,6 +138,12 @@ function raidCallback(params) {
 const so = new TwitchCommand('so', soCallback, 0, true, ['mod', 'argument1', 'sender']);
 function soCallback(params) {
   let recipient = params.argument1;
+
+  // console.log(recipient);
+
+  if (!recipient) {
+    return null;
+  }
 
   if (recipient.startsWith('@')) {
     recipient = recipient.slice(1);
@@ -216,7 +222,7 @@ function soCallback(params) {
         if (!(e.name === 'SyntaxError' && e.message === 'Unexpected end of JSON input')) {
           try {
             const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' });
-            const datePlusError = `${currentDateAndTime} :: ${e}\n`;
+            const datePlusError = `\n${currentDateAndTime} :: ${e}\n`;
             fs.appendFile('error.txt', datePlusError, appendError => {
               if (appendError) throw appendError;
             });
@@ -338,7 +344,7 @@ function uptimeCallback(params) {
         if (!(e.name === 'SyntaxError' && e.message === 'Unexpected end of JSON input')) {
           try {
             const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' });
-            const datePlusError = `${currentDateAndTime} :: ${e}\n`;
+            const datePlusError = `\n${currentDateAndTime} :: ${e}\n`;
             fs.appendFile('error.txt', datePlusError, appendError => {
               if (appendError) throw appendError;
             });
@@ -552,9 +558,12 @@ function timCallback(params) {
 }
 
 const michael = new TwitchCommand('michael', michaelCallback, 5000);
+const michaelQuotes = bexxteConfig.michaelQuotes;
 function michaelCallback(params) {
+  const i = Math.floor(Math.random() * michaelQuotes.length);
+
   return new CommandResult(
-    "Humor King tonichaelmight aka my best friend for over half my life??? we're old."
+    `Humor King tonichaelmight aka my best friend for over half my life??? we're old. As he once said: "${michaelQuotes[i]}"`
   )
 }
 

@@ -2,6 +2,8 @@ const ev = require('./ev.js'); // environment variables
 const twitchCommands = require('./twitch-commands.js');
 const { bexxteConfig } = require('./config.js');
 
+const lurkCheck = /(?<!(\w))!lurk(?!(\w))/;
+
 class Response {
   constructor(modifier, output, channel, target=null) {
     this.modifier = modifier;
@@ -56,8 +58,6 @@ const parseTwitchMessage = async message => {
     return response;
   }
 
-  const lurkCheck = /(?<!(\w))!lurk(?!(\w))/;
-
   if (lurkCheck.test(parsedMessage)) {
     response = new Response(
       't', 
@@ -108,6 +108,10 @@ const parseTwitchMessage = async message => {
     const commandResult = await twitchCommands[command].execute(commandParameters);
 
     // console.log(commandResult);
+
+    if (!commandResult) {
+      return null;
+    }
 
     if (commandResult.modifier) {
       response = new Response(

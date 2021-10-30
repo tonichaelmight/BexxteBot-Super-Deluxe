@@ -64,10 +64,10 @@ twitchClient.on('message', async (channel, tags, message, self) => {
         self: self
       });
 
-    if (messageResponse.modifier) {
+    if (messageResponse && messageResponse.modifier) {
       speak(messageResponse);
     } else if (Array.isArray(messageResponse)) {
-      console.log(messageResponse);
+      // console.log(messageResponse);
       for (const mesRes of messageResponse) {
         speak(mesRes);
       }
@@ -78,12 +78,12 @@ twitchClient.on('message', async (channel, tags, message, self) => {
   } catch (error) {
     try {
       const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' });
-      const datePlusError = `${currentDateAndTime} :: ${error}\n`;
+      const datePlusError = `${currentDateAndTime} :: ${error}\n\n`;
       fs.appendFile('error.txt', datePlusError, appendError => {
         if (appendError) throw appendError;
       });
 
-      const context = 'encountered an error while reading a message\n';
+      const context = '\nencountered an error while reading a message\n';
       fs.appendFile('error.txt', context, appendError => {
         if (appendError) throw appendError;
       });
@@ -91,7 +91,7 @@ twitchClient.on('message', async (channel, tags, message, self) => {
         if (appendError) throw appendError;
       });
     } catch (innerError) {
-      console.log('an error occurred while trying to log an error :/');
+      console.log('\nan error occurred while trying to log an error :/\n');
       console.log(innerError);
     }
   }
@@ -133,7 +133,7 @@ const activateTwitchTimer = async () => {
     if (messageResponse.modifier) {
       speak(messageResponse);
     } else {
-      console.log(messageResponse);
+      // console.log(messageResponse);
       for (const mesRes of messageResponse) {
         speak(mesRes);
       }
