@@ -2,6 +2,7 @@
 const ev = require('./ev.js'); // environment variables
 const twitch = require('tmi.js'); // twitch tingz
 const { twitchTimer } = require('./timer.js');
+
 const discord = require('discord.js');
 
 const { parseMessage } = require('./parse.js')
