@@ -1,5 +1,6 @@
 *.txt
 ev.js
 *.replit
-.gitignore
-.json
+*.gitignore
+*.json
+*.breakpoints
