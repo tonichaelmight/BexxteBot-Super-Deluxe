@@ -39,7 +39,7 @@ const twitchTimer = new Timer('t', ev.CHANNEL_NAME, [
   'sub',
   'bexxtebot',
   'bttv',
-  'ghostcon'
+  'goals'
 ])
 
 module.exports = { twitchTimer };

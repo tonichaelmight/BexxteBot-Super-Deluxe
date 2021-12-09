@@ -1,6 +1,6 @@
 exports.bexxteConfig = {
 
-  playlist: 'https://www.youtube.com/watch?v=9lFmTK07ASk&list=PL5725182A73D08BCB',
+  playlist: 'https://www.youtube.com/watch?v=xxgxkjV70Vc',
 
   contentWarning: '',
 
@@ -19,7 +19,13 @@ exports.bexxteConfig = {
     "I did not sext the recruiter.",
     "Oh my god, you stupid roly poly oly motherfucker.",
     "I'M A BUNNY GIRL WITH MY ASS OUT AND I AINT GOT SHIT",
-    "Because crime never pays, and paying... is never a crime."
+    "Because crime never pays, and paying... is never a crime.",
+    "I would like to kill you and staple you to my wife.",
+    "Can I tackle the fish?",
+    "Let's not pole dance",
+    "I walk where I go!",
+    "Is this racism?",
+    "I won\'t try to be a nice person."
   ],
 
   michaelQuotes: [

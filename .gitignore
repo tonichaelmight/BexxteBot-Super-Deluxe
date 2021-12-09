@@ -1,3 +1,5 @@
 *.txt
 ev.js
 *.replit
+.gitignore
+.json

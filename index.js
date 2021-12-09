@@ -9,7 +9,7 @@ const fs = require('fs');
 
 const speak = (response) => {
 
-  if (! response || !response.modifier) {
+  if (!response || !response.modifier) {
     return;
   }
   
@@ -139,7 +139,6 @@ const activateTwitchTimer = async () => {
       }
     }
   }
-  
 }
 
 activateTwitchTimer();

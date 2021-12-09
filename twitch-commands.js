@@ -58,12 +58,27 @@ class TwitchCommand {
 // TEMPORARY COMMANDS
 //
 
-
+/*
 const ghostcon = new TwitchCommand('ghostcon', ghostconCallback);
 function ghostconCallback(params) {
   return new CommandResult(
     'I\'m thrilled to announce I\'ll be participating in GhostCon! A virtual convention taking place Halloween weekend celebrating spooky streamers and artists! I\'ll be live to celebrate on Sunday, Oct 31 at 8pm! Find out more here: https://ghostcon.net/about.php'
   );
+}
+*/
+
+const goals = new TwitchCommand('goals', goalsCallback);
+function goalsCallback(params) {
+  return new CommandResult(
+    "I'm hoping to hit 500 followers by the end of the year! So if you're enjoying what you see, feel free to hit the heart to help me get there! bexxteLove"
+  )
+}
+
+const nqny = new TwitchCommand('nqny', nqnyCallback);
+function nqnyCallback(params) {
+  return new CommandResult(
+    "December 30th is Not Quite New Years: Round 2! Starting at 2PM eastern I'll be streaming for twelve hours as a celebration for this past year of streams and party with chat! We'll follow up from last year's stream with Spyro 2, a Fishing Minigame tier list, Alien Isolation Nightmare mode, Steam Giftcard Giveaways, and more!"
+  )
 }
 
 //
@@ -96,7 +111,7 @@ function bttvCallback(params) {
 const discord = new TwitchCommand('discord', discordCallback);
 function discordCallback(params) {
   return new CommandResult(
-    '​Join the Basement Party and hang out offline here: https://discord.gg/bexxtenation'
+    '​Join the Basement Party and hang out offline here: https://discord.gg/fTVu3xNxXa'
   )
 }
 
@@ -484,6 +499,15 @@ function bexxtebotCallback(params) {
     'Hey there everyone, my name is BexxteBot! I am a custom chat bot designed specifically for this channel; if you see me do or say anything crazy, make sure to let @bexxters or @tonichaelmight know so that it can be fixed ASAP. Happy Chatting! bexxteLove'
   )
 }
+
+/*
+const donate = new TwitchCommand('donate', donateCallback);
+function donateCallback(params) {
+  return new CommandResult(
+    'Ghostcon is raising money for the National Alliance on Mental Illness - you can donate here: https://tiltify.com/+ghostcon-2021/scaring-is-caring-ghostcon-2021'
+  )
+}
+*/
 
 const quote = new TwitchCommand('quote', quoteCallback);
 const quoteCatalog = bexxteConfig.quotes;
