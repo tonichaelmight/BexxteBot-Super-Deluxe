@@ -52,7 +52,7 @@ bexxteBot = {
 
   speakInTwitch(messageObject) {
     
-    if (response.mean) {
+    if (messageObject.response.mean) {
       this.twitchClient.timeout(
         messageObject.channel,
         messageObject.username,
