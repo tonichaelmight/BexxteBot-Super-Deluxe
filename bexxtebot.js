@@ -1,8 +1,10 @@
 const ev = require('./ev.js'); // environment variables
 const twitch = require('tmi.js'); // twitch tingz
 const { TwitchMessage } = require('./TwitchMessage.js');
-const { TwitchResponse } = require('./TwitchResponse.js');
+const { twitchCommands } = require('./TwitchCommand.js');
 const { bexxteConfig } = require('./config.js');
+
+const lurkCheck = /(?<!(\w))!lurk(?!(\w))/;
 
 bexxteBot = {
 
@@ -25,10 +27,10 @@ bexxteBot = {
 
     this.twitchClient.connect();
 
-    this.twitchClient.on('message', (channel, tags, message, self) => {
+    this.twitchClient.on('message', async (channel, tags, message, self) => {
       const messageObject = new TwitchMessage(channel, tags, message, self);
       
-      this.processTwitchMessage(messageObject);
+      await this.processTwitchMessage(messageObject);
     })
   },
 
@@ -37,16 +39,34 @@ bexxteBot = {
       bexxteConfig.forbidden.forEach(word => { 
         if (messageObject.content.includes(word)) {
           messageObject.addResponse(
-            new TwitchResponse(
-              `Naughty naughty, @${messageObject.tags.username}! We don't use that word here!`,
-              true
-          ));
+            `Naughty naughty, @${messageObject.tags.username}! We don't use that word here!`,
+            true
+          )
         }
       });
     }
   },
 
-  searchForTwitchCommand(){
+  async searchForTwitchCommand(messageObject) {
+
+    if (lurkCheck.test(messageObject.content)) {
+      messageObject.addResponse(
+        `${messageObject.tags.username} is now lurkin in the chat shadows. Stay awhile and enjoy! bexxteCozy`
+      )
+      return;
+    }
+
+    if (!messageObject.content.startsWith('!')) {
+      return;
+    }
+
+    const messageWords = messageObject.content.split(' ');
+
+    const command = messageWords[0].slice(1);
+
+    if (twitchCommands[command]) {
+      await twitchCommands[command].execute(messageObject);
+    }
 
   },
 
@@ -71,11 +91,16 @@ bexxteBot = {
         messageObject.channel,
         'hotpink'
       );
+    } else {
+      this.twitchClient.say(
+        messageObject.channel,
+        messageObject.response.output
+      );
     }
 
   },
 
-  processTwitchMessage(messageObject) {
+  async processTwitchMessage(messageObject) {
     this.moderate(messageObject); 
 
     if (messageObject.response) {
@@ -83,7 +108,12 @@ bexxteBot = {
       return;
     }
 
-    this.searchForTwitchCommand(); 
+    await this.searchForTwitchCommand(messageObject); 
+
+    if (messageObject.response) {
+      this.speakInTwitch(messageObject);
+      return;
+    }
   }
 
 }

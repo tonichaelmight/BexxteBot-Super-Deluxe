@@ -1,4 +1,5 @@
 const ev = require('./ev.js');
+const { TwitchResponse } = require('./TwitchResponse.js');
 
 class TwitchMessage {
   constructor(channel, tags, message, self) {
@@ -12,8 +13,8 @@ class TwitchMessage {
     return !(this.tags.mod || (this.tags.badges && this.tags.badges.vip) || this.tags.username === ev.CHANNEL_NAME);
   }
 
-  addResponse(response) {
-    this.response = response;
+  addResponse(output, mean=false) {
+    this.response = new TwitchResponse(output, mean);
   }
 
 }
