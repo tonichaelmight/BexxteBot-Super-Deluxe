@@ -3,6 +3,7 @@ const twitch = require('tmi.js'); // twitch tingz
 const { TwitchMessage } = require('./TwitchMessage.js');
 const { twitchCommands } = require('./TwitchCommand.js');
 const { bexxteConfig } = require('./config.js');
+const { twitchTimer } = require('./Timer.js');
 
 const lurkCheck = /(?<!(\w))!lurk(?!(\w))/;
 
@@ -30,7 +31,35 @@ bexxteBot = {
     this.twitchClient.on('message', async (channel, tags, message, self) => {
       const messageObject = new TwitchMessage(channel, tags, message, self);
       
-      await this.processTwitchMessage(messageObject);
+      try {
+
+        await this.processTwitchMessage(messageObject);
+
+      } catch(error) {
+
+        try {
+          const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' });
+          const datePlusError = `${currentDateAndTime} :: ${error}\n\n`;
+          fs.appendFile('error.txt', datePlusError, appendError => {
+            if (appendError) throw appendError;
+          });
+
+          const context = '\nencountered an error while reading a message\n';
+          fs.appendFile('error.txt', context, appendError => {
+            if (appendError) throw appendError;
+          });
+          fs.appendFile('error.txt', error.message + '\n', appendError => {
+            if (appendError) throw appendError;
+          });
+
+        } catch (innerError) {
+          
+          console.log('\nan error occurred while trying to log an error :/\n');
+          console.log(innerError);
+
+        }
+      }
+      
     })
   },
 
@@ -71,32 +100,38 @@ bexxteBot = {
   },
 
   speakInTwitch(messageObject) {
+
+    messageObject.response.forEach(responseLine => {
+
+      if (responseLine.mean) {
+        this.twitchClient.timeout(
+          messageObject.channel,
+          messageObject.username,
+          20,
+          'used forbidden term'
+        );
+        this.twitchClient.color(
+          messageObject.channel,
+          'red'
+        );
+        this.twitchClient.say(
+          messageObject.channel,
+          responseLine.output
+        );
+        this.twitchClient.color(
+          messageObject.channel,
+          'hotpink'
+        );
+      } else {
+        this.twitchClient.say(
+          messageObject.channel,
+          responseLine.output
+        );
+      }
+
+    })
     
-    if (messageObject.response.mean) {
-      this.twitchClient.timeout(
-        messageObject.channel,
-        messageObject.username,
-        20,
-        'used forbidden term'
-      );
-      this.twitchClient.color(
-        messageObject.channel,
-        'red'
-      );
-      this.twitchClient.say(
-        messageObject.channel,
-        messageObject.response.output
-      );
-      this.twitchClient.color(
-        messageObject.channel,
-        'hotpink'
-      );
-    } else {
-      this.twitchClient.say(
-        messageObject.channel,
-        messageObject.response.output
-      );
-    }
+    
 
   },
 
@@ -114,8 +149,29 @@ bexxteBot = {
       this.speakInTwitch(messageObject);
       return;
     }
+  },
+
+  async activateTwitchTimer() {
+    let command = '';
+
+    while (true) {
+      
+      command = await twitchTimer.getTimerOutput();
+
+      const dummyMessage = new TwitchMessage(
+        ev.CHANNEL_NAME,
+        { mod: true, username: '' },
+        `!${command}`,
+        false
+      );
+
+      await this.processTwitchMessage(dummyMessage);
+
+    }
+
   }
 
 }
 
 bexxteBot.establishTwitchClient();
+bexxteBot.activateTwitchTimer();

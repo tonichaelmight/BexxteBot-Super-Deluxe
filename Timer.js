@@ -1,9 +1,7 @@
 const ev = require('./ev.js'); // environment variables
 
 class Timer {
-  constructor(modifier, channel, commands) {
-    this.modifier = modifier;
-    this.channel = channel;
+  constructor(commands) {
     this.commands = commands;
     this.previous = [];
   }
@@ -32,7 +30,7 @@ class Timer {
   }
 }
 
-const twitchTimer = new Timer('t', ev.CHANNEL_NAME, [
+const twitchTimer = new Timer([
   'discord',
   'prime',
   'follow',

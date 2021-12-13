@@ -24,7 +24,7 @@ class TwitchCommand {
   }
 
   async execute(messageObject) {
-    if (!messageObject.tags.mod || !messageObject.tags.username === ev.CHANNEL_NAME) {
+    if (!messageObject.tags.mod && !messageObject.tags.username === ev.CHANNEL_NAME) {
       if (this.modOnly || this.onCooldown) {
         return;
       }
@@ -89,7 +89,7 @@ function bttvCallback(messageObject) {
 const discord = new TwitchCommand('discord', discordCallback);
 function discordCallback(messageObject) {
   messageObject.addResponse(
-    '​Join the Basement Party and hang out offline here: https://discord.gg/fTVu3xNxXa'
+    `Join the Basement Party and hang out offline here: ${bexxteConfig.discordServerLink}`
   )
 }
 
@@ -403,7 +403,7 @@ function cwCallback(messageObject) {
 } 
 
 const stap = new TwitchCommand('stap', stapCallback);
-function stapCallback(parms) {
+function stapCallback(messageObject) {
   messageObject.addResponse(
     '​stop flaming ok! I dnt ned all da negatwiti yo ar geveng me right nau! bexxteGun'
   )
@@ -411,9 +411,15 @@ function stapCallback(parms) {
 
 const mute = new TwitchCommand('mute', muteCallback);
 function muteCallback(messageObject) {
-  const muteOutput = new CommandResult(`@${ev.CHANNEL_NAME.toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`);
-
-  return [muteOutput, muteOutput, muteOutput];
+  messageObject.addResponse(
+    `@${ev.CHANNEL_NAME.toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
+  );
+  messageObject.addResponse(
+    `@${ev.CHANNEL_NAME.toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
+  );
+  messageObject.addResponse(
+    `@${ev.CHANNEL_NAME.toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
+  );
 }
 
 const pitbull = new TwitchCommand('pitbull', pitbullCallback);
@@ -440,11 +446,13 @@ function prideCallback(messageObject) {
   messageObject.addResponse(emoteString);
 }
 
-const raiding = new TwitchCommand('raiding', raidingCallback, 0, true, ['mod', 'argument1']);
+const raiding = new TwitchCommand('raiding', raidingCallback, 0, true);
 function raidingCallback(messageObject) {
   let raidingMessage = '';
 
-  switch (messageObject.argument1){
+  const argument = messageObject.content.split(' ')[1];
+
+  switch (argument){
     case 'cozy':
       raidingMessage = 'Cozy Raid bexxteCozy bexxteCozy';
       break;
@@ -525,7 +533,7 @@ const getRandomValidation = () => {
   return Math.floor(Math.random() * bexxteConfig.validations.length);
 }
 
-const validate = new TwitchCommand('validate', validateCallback, 5000, false, ['mod', 'sender']);
+const validate = new TwitchCommand('validate', validateCallback, 5000, false);
 function validateCallback(messageObject) {
   let v1, v2, v3;
 
@@ -540,7 +548,7 @@ function validateCallback(messageObject) {
   }
 
   // she gives you three validation phrases
-  messageObject.addResponse(`@${messageObject.sender}
+  messageObject.addResponse(`@${messageObject.tags['display-name']}
       ${bexxteConfig.validations[v1]}
       ${bexxteConfig.validations[v2]}
       ${bexxteConfig.validations[v3]}`

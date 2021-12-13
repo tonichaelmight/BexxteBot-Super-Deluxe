@@ -4,6 +4,8 @@ exports.bexxteConfig = {
 
   contentWarning: '',
 
+  discordServerLink: 'https://discord.gg/fTVu3xNxXa',
+
   quotes: [
     "Enjoy your suffering byeeee! <3",
     "Nothing is stopping me but common sense.",

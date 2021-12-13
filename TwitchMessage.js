@@ -14,7 +14,11 @@ class TwitchMessage {
   }
 
   addResponse(output, mean=false) {
-    this.response = new TwitchResponse(output, mean);
+    if (this.response) {
+      this.response.push(new TwitchResponse(output, mean));
+    } else {
+      this.response = [new TwitchResponse(output, mean)];
+    }
   }
 
 }
