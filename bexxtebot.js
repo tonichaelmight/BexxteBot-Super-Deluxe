@@ -1,13 +1,12 @@
 const ev = require('./ev.js'); // environment variables
 const twitch = require('tmi.js'); // twitch tingz
+const discord = require('discord.js');
 const { TwitchMessage } = require('./TwitchMessage.js');
 const { twitchCommands } = require('./TwitchCommand.js');
 const { bexxteConfig } = require('./config.js');
 const { twitchTimer } = require('./Timer.js');
 
-const lurkCheck = /(?<!(\w))!lurk(?!(\w))/;
-
-bexxteBot = {
+const bexxteBot = {
 
   establishTwitchClient() {
     // ESTABLISH TWITCH CLIENT CONNECTION
@@ -29,11 +28,11 @@ bexxteBot = {
     this.twitchClient.connect();
 
     this.twitchClient.on('message', async (channel, tags, message, self) => {
-      const messageObject = new TwitchMessage(channel, tags, message, self);
+      const twitchMessage = new TwitchMessage(channel, tags, message, self);
       
       try {
 
-        await this.processTwitchMessage(messageObject);
+        await this.processTwitchMessage(twitchMessage);
 
       } catch(error) {
 
@@ -62,13 +61,34 @@ bexxteBot = {
       
     })
   },
+  
+  establishDiscordClient() {
+    this.discordClient = new discord.Client();
 
-  moderate(messageObject) {
-    if (messageObject.needsModeration()) {
+    this.discordClient.once('ready', () => {
+      console.log(`Logged in as ${this.discordClient.user.tag}!`);
+    });
+
+    this.discordClient.on('message', async message => {
+      // console.log(message);
+      if (message.content === '!ping') {
+        message.channel.send('pong!');
+      }
+
+      console.log(message);
+      console.log(message.channel);
+      console.log(await message.author.fetchFlags().bitfield);
+    });
+
+    this.discordClient.login(ev.DISCORD_TOKEN);
+  },
+
+  moderateTwitchMessage(twitchMessage) {
+    if (twitchMessage.needsModeration()) {
       bexxteConfig.forbidden.forEach(word => { 
-        if (messageObject.content.includes(word)) {
-          messageObject.addResponse(
-            `Naughty naughty, @${messageObject.tags.username}! We don't use that word here!`,
+        if (twitchMessage.content.includes(word)) {
+          twitchMessage.addResponse(
+            `Naughty naughty, @${twitchMessage.tags.username}! We don't use that word here!`,
             true
           )
         }
@@ -76,55 +96,58 @@ bexxteBot = {
     }
   },
 
-  async searchForTwitchCommand(messageObject) {
+  async searchForTwitchCommand(twitchMessage) {
 
-    if (lurkCheck.test(messageObject.content)) {
-      messageObject.addResponse(
-        `${messageObject.tags.username} is now lurkin in the chat shadows. Stay awhile and enjoy! bexxteCozy`
+    const lurkCheck = /(?<!(\w))!lurk(?!(\w))/;
+
+    if (lurkCheck.test(twitchMessage.content)) {
+      twitchMessage.addResponse(
+        `${twitchMessage.tags.username} is now lurkin in the chat shadows. Stay awhile and enjoy! bexxteCozy`
       )
       return;
     }
 
-    if (!messageObject.content.startsWith('!')) {
+    if (!twitchMessage.content.startsWith('!')) {
       return;
     }
 
-    const messageWords = messageObject.content.split(' ');
+    const messageWords = twitchMessage.content.split(' ');
 
     const command = messageWords[0].slice(1);
 
     if (twitchCommands[command]) {
-      await twitchCommands[command].execute(messageObject);
+      await twitchCommands[command].execute(twitchMessage);
     }
 
   },
 
-  speakInTwitch(messageObject) {
+  speakInTwitch(twitchMessage) {
 
-    messageObject.response.forEach(responseLine => {
+    twitchMessage.response.forEach(responseLine => {
 
       if (responseLine.mean) {
         this.twitchClient.timeout(
-          messageObject.channel,
-          messageObject.username,
+          twitchMessage.channel,
+          twitchMessage.username,
           20,
           'used forbidden term'
         );
         this.twitchClient.color(
-          messageObject.channel,
+          twitchMessage.channel,
           'red'
         );
         this.twitchClient.say(
-          messageObject.channel,
+          twitchMessage.channel,
           responseLine.output
         );
         this.twitchClient.color(
-          messageObject.channel,
+          twitchMessage.channel,
           'hotpink'
         );
+        
       } else {
         this.twitchClient.say(
-          messageObject.channel,
+          twitchMessage.channel,
           responseLine.output
         );
       }
@@ -135,18 +158,18 @@ bexxteBot = {
 
   },
 
-  async processTwitchMessage(messageObject) {
-    this.moderate(messageObject); 
+  async processTwitchMessage(twitchMessage) {
+    this.moderateTwitchMessage(twitchMessage); 
 
-    if (messageObject.response) {
-      this.speakInTwitch(messageObject);
+    if (twitchMessage.response) {
+      this.speakInTwitch(twitchMessage);
       return;
     }
 
-    await this.searchForTwitchCommand(messageObject); 
+    await this.searchForTwitchCommand(twitchMessage); 
 
-    if (messageObject.response) {
-      this.speakInTwitch(messageObject);
+    if (twitchMessage.response) {
+      this.speakInTwitch(twitchMessage);
       return;
     }
   },
@@ -157,6 +180,10 @@ bexxteBot = {
     while (true) {
       
       command = await twitchTimer.getTimerOutput();
+
+      if (!command) {
+        continue;
+      }
 
       const dummyMessage = new TwitchMessage(
         ev.CHANNEL_NAME,
@@ -174,4 +201,5 @@ bexxteBot = {
 }
 
 bexxteBot.establishTwitchClient();
+bexxteBot.establishDiscordClient();
 bexxteBot.activateTwitchTimer();

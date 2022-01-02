@@ -1,3 +1,5 @@
+// if you're trying to make a new command, this is the right page; scroll down a bit further
+
 const ev = require('./ev.js'); // environment variables
 const { bexxteConfig } = require('./config.js');
 const https = require('https');
@@ -43,6 +45,21 @@ class TwitchCommand {
     }
   }
 }
+
+/* basic TwitchCommand creation template
+
+replace the word 'template' (all four times it appears) with the name of your command. Fill in your text in the double quotes
+
+this works for when you just want BexxteBot to always say the same thing when the command is triggered
+
+const template = new TwitchCommand('template', templateCallback);
+function templateCallback(messageObject) {
+  messageObject.addResponse(
+    "Type the message you would like BexxteBot to say here!"
+  )
+}
+
+*/
 
 
 const goals = new TwitchCommand('goals', goalsCallback);

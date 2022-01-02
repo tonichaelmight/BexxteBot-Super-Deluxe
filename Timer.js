@@ -1,4 +1,5 @@
 const ev = require('./ev.js'); // environment variables
+const { bexxters } = require('./bexxters.js');
 
 class Timer {
   constructor(commands) {
@@ -11,20 +12,28 @@ class Timer {
   }
 
   async getTimerOutput() {
-    let i = this.getRandomIndex();
-    while (this.previous.includes(i)) {
-      i = this.getRandomIndex();
-    }
+    let result;
+    const live = await bexxters.isLive();
 
-    this.previous.push(i);
+    if (live) {
+      let i = this.getRandomIndex();
+      while (this.previous.includes(i)) {
+        i = this.getRandomIndex();
+      }
+      result = this.commands[i]
+      this.previous.push(i);
 
-    if (this.previous.length > 3) {
-      this.previous.shift();
+      if (this.previous.length > 3) {
+        this.previous.shift();
+      }
+    } else {
+      result = null;
     }
 
     return new Promise(resolve => {
       setTimeout(() => {
-        resolve(this.commands[i]);
+        console.log(result);
+        resolve(result);
       }, Math.floor(Math.random() * 1380000) + 720000);
     }); 
   }
@@ -38,6 +47,6 @@ const twitchTimer = new Timer([
   'bexxtebot',
   'bttv',
   'goals'
-])
+]);
 
 module.exports = { twitchTimer };
