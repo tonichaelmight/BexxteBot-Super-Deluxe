@@ -4,6 +4,7 @@ const ev = require('./ev.js'); // environment variables
 const { bexxteConfig } = require('./config.js');
 const https = require('https');
 const fs = require('fs');
+const { bexxters } = require('./bexxters.js');
 
 const twitchCommands = {};
 
@@ -35,7 +36,7 @@ class TwitchCommand {
     if (this.cooldown_ms) {
       this.createCooldown();
     }
-    
+
     try {
       await this.callback(messageObject);
       return;
@@ -61,20 +62,60 @@ function templateCallback(messageObject) {
 
 */
 
+const test = new TwitchCommand('test', testCallback);
+function testCallback(messageObject) {
+  let current = fs.readFileSync(`counters/${this.name}.txt`, 'utf-8');
+  
+  current *= 1;
+  let neue;
 
-const goals = new TwitchCommand('goals', goalsCallback);
-function goalsCallback(messageObject) {
-  messageObject.addResponse(
-    "I'm hoping to hit 500 followers by the end of the year! So if you're enjoying what you see, feel free to hit the heart to help me get there! bexxteLove"
-  )
+  if (Number.isNaN(current)) {
+    neue = 0;
+  } else {
+    neue = current + 1;
+  }
+
+  fs.writeFileSync(`counters/${this.name}.txt`, neue);
+
+  messageObject.addResponse(`You have tested ${neue} times.`);
+
 }
 
-const nqny = new TwitchCommand('nqny', nqnyCallback);
-function nqnyCallback(messageObject) {
-  messageObject.addResponse(
-    "December 30th is Not Quite New Years: Round 2! Starting at 2PM eastern I'll be streaming for twelve hours as a celebration for this past year of streams and party with chat! We'll follow up from last year's stream with Spyro 2, a Fishing Minigame tier list, Alien Isolation Nightmare mode, Steam Giftcard Giveaways, and more!"
-  )
+const bop = new TwitchCommand('bop', bopCallback);
+function bopCallback(messageObject) {
+  if (!fs.existsSync(`counters/${this.name}.txt`)) {
+    fs.writeFileSync(`counters/${this.name}.txt`, 0);
+  }
+  let currentBops = fs.readFileSync(`counters/${this.name}.txt`, 'utf-8');
+
+  currentBops *= 1;
+  let newBops;
+
+  if (Number.isNaN(currentBops)) {
+    newBops = 0;
+  } else {
+    newBops = currentBops + 1;
+  }
+
+  fs.writeFileSync(`counters/${this.name}.txt`, newBops);
+
+  messageObject.addResponse(`Y'all been horny ${newBops} times.`);
 }
+
+
+// const goals = new TwitchCommand('goals', goalsCallback);
+// function goalsCallback(messageObject) {
+//   messageObject.addResponse(
+//     "I'm hoping to hit 500 followers by the end of the year! So if you're enjoying what you see, feel free to hit the heart to help me get there! bexxteLove"
+//   )
+// }
+
+// const nqny = new TwitchCommand('nqny', nqnyCallback);
+// function nqnyCallback(messageObject) {
+//   messageObject.addResponse(
+//     "December 30th is Not Quite New Years: Round 2! Starting at 2PM eastern I'll be streaming for twelve hours as a celebration for this past year of streams and party with chat! We'll follow up from last year's stream with Spyro 2, a Fishing Minigame tier list, Alien Isolation Nightmare mode, Steam Giftcard Giveaways, and more!"
+//   )
+// }
 
 //
 // BASIC COMMANDS
@@ -210,9 +251,10 @@ function soCallback(messageObject) {
         }
 
         // console.log(channelData);
-  
+
         if (!channelData.game_name) {
           shoutout += `Everyone go check out @${channelData.display_name} at twitch.tv/${channelData.broadcaster_login}! bexxteLove`;
+          return;
         }
 
         if (channelData.is_live) {
@@ -229,7 +271,7 @@ function soCallback(messageObject) {
             shoutout += `Everyone go check out @${channelData.display_name} at twitch.tv/${channelData.broadcaster_login}! They were last seen playing "${channelData.game_name}" bexxteLove`;
           }
         }
-        
+
       } catch (e) {
         if (!(e.name === 'SyntaxError' && e.message === 'Unexpected end of JSON input')) {
           try {
@@ -243,7 +285,7 @@ function soCallback(messageObject) {
             console.log(innerError);
           }
         }
-      } 
+      }
     })
   })
 
@@ -256,14 +298,17 @@ function soCallback(messageObject) {
   channelInfoRequest.end();
 
   return new Promise(resolve => {
-    setTimeout(() => {
-      messageObject.addResponse(shoutout);
-      resolve(
-        true
-      );
-    }, 500);
+    let cycles = 0;
+    const resolutionTimeout = setInterval(() => {
+      if (shoutout || cycles >= 20) {
+        messageObject.addResponse(shoutout);
+        resolve(true);
+        clearInterval(resolutionTimeout);
+      }
+      cycles++;
+    }, 250)
   });
-  
+
 } // end soCallback
 
 const sub = new TwitchCommand('sub', subCallback);
@@ -275,7 +320,7 @@ function subCallback(messageObject) {
 
 const uptime = new TwitchCommand('uptime', uptimeCallback);
 function uptimeCallback(messageObject) {
-  const streamer = ev.CHANNEL_NAME
+  const streamer = 'hey__luna'//ev.CHANNEL_NAME
 
   let requestResult = '';
 
@@ -290,6 +335,8 @@ function uptimeCallback(messageObject) {
       'Client-id': ev.CLIENT_ID
     }
   }
+
+  let requestComplete = false;
 
   const channelInfoRequest = https.request(channelRequestOptions, res => {
 
@@ -355,6 +402,8 @@ function uptimeCallback(messageObject) {
 
         }
 
+        requestComplete = true;
+
       } catch (e) {
         if (!(e.name === 'SyntaxError' && e.message === 'Unexpected end of JSON input')) {
           try {
@@ -379,10 +428,19 @@ function uptimeCallback(messageObject) {
   channelInfoRequest.end();
 
   return new Promise(resolve => {
-    setTimeout(() => {
-      messageObject.addResponse(uptimeOutput);
-      resolve(true);
-    }, 500);
+    let cycles = 0;
+    const resolutionTimeout = setInterval(() => {
+      if (requestComplete) {
+        messageObject.addResponse(uptimeOutput);
+        resolve(true);
+        clearInterval(resolutionTimeout);
+      }
+      if (cycles >= 20) {
+        resolve(true);
+        clearInterval(resolutionTimeout);
+      }
+      cycles++;
+    }, 250)
 
   });
 
@@ -410,14 +468,14 @@ function blmCallback(messageObject) {
 // content warning
 const cw = new TwitchCommand('cw', cwCallback);
 function cwCallback(messageObject) {
-  const result = 
-  bexxteConfig.contentWarning || 
-  'The streamer has not designated any content warnings for this game.';
+  const result =
+    bexxteConfig.contentWarning ||
+    'The streamer has not designated any content warnings for this game.';
 
   messageObject.addResponse(
     result
   )
-} 
+}
 
 const stap = new TwitchCommand('stap', stapCallback);
 function stapCallback(messageObject) {
@@ -469,7 +527,7 @@ function raidingCallback(messageObject) {
 
   const argument = messageObject.content.split(' ')[1];
 
-  switch (argument){
+  switch (argument) {
     case 'cozy':
       raidingMessage = 'Cozy Raid bexxteCozy bexxteCozy';
       break;
@@ -569,7 +627,7 @@ function validateCallback(messageObject) {
       ${bexxteConfig.validations[v1]}
       ${bexxteConfig.validations[v2]}
       ${bexxteConfig.validations[v3]}`
-    );
+  );
 }
 
 //

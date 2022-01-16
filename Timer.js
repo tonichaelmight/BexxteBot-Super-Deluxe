@@ -1,6 +1,7 @@
 const ev = require('./ev.js'); // environment variables
 const { bexxters } = require('./bexxters.js');
 
+// TIMER CLASS
 class Timer {
   constructor(commands) {
     this.commands = commands;

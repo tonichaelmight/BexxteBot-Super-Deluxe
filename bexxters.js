@@ -7,7 +7,7 @@ const bexxters = {
 
   async isLive() {
 
-    let live;
+    let live = undefined;
     let requestResult = '';
 
     const channelRequestOptions = {
@@ -71,15 +71,19 @@ const bexxters = {
     })
 
     channelInfoRequest.end();
+    
+    let cycles = 0;
 
     return new Promise(resolve => {
-      setTimeout(() => {
-        resolve(live);
-      }, 1000)
+      const resolutionTimeout = setInterval(() => {
+        if (live !== undefined || cycles > 20) {
+          resolve(live);
+          clearInterval(resolutionTimeout);
+        }
+        cycles++;
+      }, 250)
     })
   }
-
 }
-
 module.exports = { bexxters };
 

@@ -2,7 +2,7 @@ exports.bexxteConfig = {
 
   playlist: 'https://www.youtube.com/watch?v=xxgxkjV70Vc',
 
-  contentWarning: '',
+  contentWarning: 'Content Warnings for Doki Doki Literature Club include: Depression, suicide, self-harm, and abuse',
 
   discordServerLink: 'https://discord.gg/fTVu3xNxXa',
 
