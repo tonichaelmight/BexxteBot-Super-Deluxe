@@ -1,5 +1,15 @@
 exports.bexxteConfig = {
 
+  schedule: {
+    sunday: "Needy Streamer Overload",
+    monday: "Yakuza 4",
+    tuesday: "Sucker for Love",
+    wednesday: "Yakuza 4",
+    thursday: "Sucker for Love",
+    friday: "",
+    saturday: ""
+  },
+
   playlist: 'https://www.youtube.com/watch?v=xxgxkjV70Vc',
 
   contentWarning: 'Content Warnings for Doki Doki Literature Club include: Depression, suicide, self-harm, and abuse',

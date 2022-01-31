@@ -47,7 +47,8 @@ const twitchTimer = new Timer([
   'sub',
   'bexxtebot',
   'bttv',
-  'goals'
+  'goals',
+  'schedule'
 ]);
 
 module.exports = { twitchTimer };

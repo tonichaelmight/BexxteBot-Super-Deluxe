@@ -449,7 +449,7 @@ function uptimeCallback(messageObject) {
 const whomst = new TwitchCommand('whomst', whomstCallback, 2000);
 function whomstCallback(messageObject) {
   messageObject.addResponse(
-    "​I'm a Variety Streamer mostly streaming RPGs, Horror, and Indie stuff because I'm not good at Battle Royale FPS games and can't commit to MMOs. You can catch me live five to six nights a week at 7:30pm EST! We do Spooky Sunday with horror/suspense games every Sunday!"
+    "​I'm a Variety Streamer mostly streaming RPGs, Horror, and Indie stuff because I'm not good at Battle Royale FPS games and can't commit to MMOs. You can catch me live five to six nights a week at 8:00pm EST! We do Spooky Sunday with horror/suspense games every Sunday!"
   )
 }
 
@@ -585,6 +585,29 @@ function quoteCallback(messageObject) {
     quoteCatalog[i]
   )
 
+}
+
+const schedule = new TwitchCommand('schedule', scheduleCallback);
+function scheduleCallback(messageObject) {
+  const days = [['sunday', 'SUN'], ['monday', 'MON'], ['tuesday', 'TUES'], ['wednesday', 'WEDS'], ['thursday', 'THURS'], ['friday', 'FRI'], ['saturday', 'SAT']];
+  let responseString = '';
+  let first = true;
+
+  for (const day of days) {
+    if (bexxteConfig.schedule[day[0]]) {
+      if (!first) {
+        responseString += ' | '
+      }
+      responseString += day[1];
+      responseString += ': ';
+      responseString += bexxteConfig.schedule[day[0]];
+      first = false;
+    }
+  }
+
+  messageObject.addResponse(
+    responseString
+  );
 }
 
 const socials = new TwitchCommand('socials', socialsCallback);
