@@ -1,18 +1,18 @@
 exports.bexxteConfig = {
 
   schedule: {
-    sunday: "Needy Streamer Overload",
+    sunday: "Fears to Fathom",
     monday: "Yakuza 4",
-    tuesday: "Sucker for Love",
+    tuesday: "Hatoful Boyfriend",
     wednesday: "Yakuza 4",
-    thursday: "Sucker for Love",
+    thursday: "Hatoful Boyfriend",
     friday: "",
     saturday: ""
   },
 
-  playlist: 'https://www.youtube.com/watch?v=xxgxkjV70Vc',
+  playlist: '',
 
-  contentWarning: 'Content Warnings for Doki Doki Literature Club include: Depression, suicide, self-harm, and abuse',
+  contentWarning: '',
 
   discordServerLink: 'https://discord.gg/fTVu3xNxXa',
 

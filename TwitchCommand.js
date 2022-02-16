@@ -27,7 +27,8 @@ class TwitchCommand {
   }
 
   async execute(messageObject) {
-    if (!messageObject.tags.mod && !messageObject.tags.username === ev.CHANNEL_NAME) {
+    console.log(messageObject);
+    if (!messageObject.tags.mod && !(messageObject.tags.username === ev.CHANNEL_NAME)) {
       if (this.modOnly || this.onCooldown) {
         return;
       }
@@ -62,24 +63,24 @@ function templateCallback(messageObject) {
 
 */
 
-const test = new TwitchCommand('test', testCallback);
-function testCallback(messageObject) {
-  let current = fs.readFileSync(`counters/${this.name}.txt`, 'utf-8');
+// const test = new TwitchCommand('test', testCallback);
+// function testCallback(messageObject) {
+//   let current = fs.readFileSync(`counters/${this.name}.txt`, 'utf-8');
   
-  current *= 1;
-  let neue;
+//   current *= 1;
+//   let neue;
 
-  if (Number.isNaN(current)) {
-    neue = 0;
-  } else {
-    neue = current + 1;
-  }
+//   if (Number.isNaN(current)) {
+//     neue = 0;
+//   } else {
+//     neue = current + 1;
+//   }
 
-  fs.writeFileSync(`counters/${this.name}.txt`, neue);
+//   fs.writeFileSync(`counters/${this.name}.txt`, neue);
 
-  messageObject.addResponse(`You have tested ${neue} times.`);
+//   messageObject.addResponse(`You have tested ${neue} times.`);
 
-}
+// }
 
 const bop = new TwitchCommand('bop', bopCallback);
 function bopCallback(messageObject) {
@@ -99,7 +100,7 @@ function bopCallback(messageObject) {
 
   fs.writeFileSync(`counters/${this.name}.txt`, newBops);
 
-  messageObject.addResponse(`Y'all been horny ${newBops} times.`);
+  messageObject.addResponse(`Chat has been bpped for being horny on main bexxteXcite They have been horny ${newBops} times so far for Yakuza.`);
 }
 
 
@@ -204,12 +205,14 @@ function soCallback(messageObject) {
     messageObject.addResponse(
       `@${recipient} is pretty cool, but she doesn't need a shoutout on her own channel.`
     )
+    return;
   }
 
   if (recipient === messageObject.tags.username) {
     messageObject.addResponse(
       `Nice try @${recipient}, you can't give yourself a shoutout!`
     )
+    return;
   }
 
   let requestResult = '';
@@ -320,7 +323,7 @@ function subCallback(messageObject) {
 
 const uptime = new TwitchCommand('uptime', uptimeCallback);
 function uptimeCallback(messageObject) {
-  const streamer = 'hey__luna'//ev.CHANNEL_NAME
+  const streamer = ev.CHANNEL_NAME;
 
   let requestResult = '';
 
