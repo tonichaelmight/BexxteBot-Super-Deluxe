@@ -27,7 +27,7 @@ class TwitchCommand {
   }
 
   async execute(messageObject) {
-    console.log(messageObject);
+    //console.log(messageObject);
     if (!messageObject.tags.mod && !(messageObject.tags.username === ev.CHANNEL_NAME)) {
       if (this.modOnly || this.onCooldown) {
         return;
