@@ -5,7 +5,7 @@ class TwitchMessage {
   constructor(channel, tags, message, self) {
     this.channel = channel;
     this.tags = tags;
-    this.content = message;
+    this.content = message.toLowerCase();
     this.self = self || tags.username.match(/bexxtebot/i);
   }
 

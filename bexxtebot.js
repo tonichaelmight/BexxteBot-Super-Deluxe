@@ -6,7 +6,7 @@
 const ev = require('./ev.js'); // environment variables
 const fs = require('fs');
 const twitch = require('tmi.js'); // twitch tingz
-const discord = require('discord.js');
+//const discord = require('discord.js');
 const { TwitchMessage } = require('./TwitchMessage.js');
 const { twitchCommands } = require('./TwitchCommand.js');
 const { bexxteConfig } = require('./config.js');
@@ -73,26 +73,26 @@ const bexxteBot = {
   
   // estabishes a client that can send and receive messages from Discord
   // this is still very much WIP
-  establishDiscordClient() {
-    this.discordClient = new discord.Client();
+  // establishDiscordClient() {
+  //   this.discordClient = new discord.Client();
 
-    this.discordClient.once('ready', () => {
-      console.log(`Logged in as ${this.discordClient.user.tag}!`);
-    });
+  //   this.discordClient.once('ready', () => {
+  //     console.log(`Logged in as ${this.discordClient.user.tag}!`);
+  //   });
 
-    this.discordClient.on('message', async message => {
-      // console.log(message);
-      if (message.content === '!ping') {
-        message.channel.send('pong!');
-      }
+  //   this.discordClient.on('message', async message => {
+  //     // console.log(message);
+  //     if (message.content === '!ping') {
+  //       message.channel.send('pong!');
+  //     }
 
-      console.log(message);
-      console.log(message.channel);
-      console.log(await message.author.fetchFlags().bitfield);
-    });
+  //     console.log(message);
+  //     console.log(message.channel);
+  //     console.log(await message.author.fetchFlags().bitfield);
+  //   });
 
-    this.discordClient.login(ev.DISCORD_TOKEN);
-  },
+  //   this.discordClient.login(ev.DISCORD_TOKEN);
+  // },
 
   // moderates twitch messages
   moderateTwitchMessage(twitchMessage) {
@@ -160,6 +160,7 @@ const bexxteBot = {
         );
         
       } else {
+        console.log('hi');
         this.twitchClient.say(
           twitchMessage.channel,
           responseLine.output
@@ -218,5 +219,5 @@ const bexxteBot = {
 }
 
 bexxteBot.establishTwitchClient();
-bexxteBot.establishDiscordClient();
+//bexxteBot.establishDiscordClient();
 bexxteBot.activateTwitchTimer();

@@ -33,7 +33,7 @@ class Timer {
 
     return new Promise(resolve => {
       setTimeout(() => {
-        console.log(result);
+        //console.log(result);
         resolve(result);
       }, Math.floor(Math.random() * 1380000) + 720000);
     }); 
@@ -48,7 +48,9 @@ const twitchTimer = new Timer([
   'bexxtebot',
   'bttv',
   'goals',
-  'schedule'
+  'schedule',
+  'donate',
+  'ms',
 ]);
 
 module.exports = { twitchTimer };

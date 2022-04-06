@@ -6,6 +6,9 @@ const https = require('https');
 const fs = require('fs');
 const { bexxters } = require('./bexxters.js');
 
+const Database = require("@replit/database");
+const db = new Database();
+
 const twitchCommands = {};
 
 class TwitchCommand {
@@ -63,6 +66,132 @@ function templateCallback(messageObject) {
 
 */
 
+
+// CURRENT WORK
+class TwitchCounterCommand extends TwitchCommand {
+
+  constructor(name, callback, cooldown_ms = 10000, modOnly = false) {
+    super(name, callback, cooldown_ms = 10000, modOnly = false);
+    twitchCommands[name] = this;
+  }
+
+  async evaluateForArgument(messageObject) {
+    const messageWords = messageObject.content.split(' ');
+    const possibleArgument = messageWords[1];
+
+    if (possibleArgument === 'set') {
+      let secondArgument = messageWords[2];
+      secondArgument *= 1;
+
+      if (Number.isNaN(secondArgument)) {
+        return false;
+      } else {
+        await this.setValue(secondArgument);
+        return 'set';
+      }
+    } 
+
+    if (possibleArgument === 'add' || possibleArgument === '+') {
+      const currentValue = await this.getValue();
+      await this.setValue(currentValue * 1 + 1);
+      return 'add';
+    }
+  }
+
+  async setValue(newValue) {
+    await db.set(this.name, newValue);
+    return;
+  }
+
+  async getValue() {
+
+    let currentValue = await db.get(this.name);
+    
+    if (!currentValue) {
+      currentValue = 0;
+    }
+    
+    return currentValue;
+  }
+
+  async execute(messageObject) {
+    //console.log(messageObject);
+    if (!messageObject.tags.mod && !(messageObject.tags.username === ev.CHANNEL_NAME)) {
+      if (this.modOnly || this.onCooldown) {
+        return;
+      }
+    }
+
+    let argument = false;
+
+    if (messageObject.tags.mod || messageObject.tags.username === ev.CHANNEL_NAME) {
+      argument = await this.evaluateForArgument(messageObject);
+    }
+
+    if (this.cooldown_ms) {
+      this.createCooldown();
+    }
+
+    try {
+      await this.callback(messageObject, argument);
+      return;
+    } catch (e) {
+      console.log(`Problem executing the ${this.name} command`);
+      throw e;
+    }
+  }
+}
+
+const test = new TwitchCounterCommand('test', testCallback);
+async function testCallback(messageObject, argument) {
+
+  const currentValue = await this.getValue();
+  
+  switch (argument) {
+    case 'set':
+      messageObject.addResponse(
+        `You have set the test count to ${currentValue}.`
+      )
+      break;
+    case 'add':
+      messageObject.addResponse(
+        `You have increased the test value by 1. The new test value is ${currentValue}.`
+      )
+      break;
+    default:
+      messageObject.addResponse(
+        `The current test value is ${currentValue}.`
+      )
+      break;
+  }
+}
+
+const bop = new TwitchCounterCommand('bop', bopCallback);
+async function bopCallback(messageObject, argument) {
+
+  const currentValue = await this.getValue();
+  
+  switch (argument) {
+    case 'set':
+      messageObject.addResponse(
+        `You have set the number of bops to ${currentValue} bexxteBonk`
+      )
+      break;
+    case 'add':
+      messageObject.addResponse(
+        `Chat has been bopped for being horny on main bexxteBonk They have been horny ${currentValue} times so far for Yakuza.`
+      )
+      break;
+    default:
+      messageObject.addResponse(
+        `Chat has been horny for Yakuza ${currentValue} times`
+      )
+      break;
+  }
+  
+}
+
+
 // const test = new TwitchCommand('test', testCallback);
 // function testCallback(messageObject) {
 //   let current = fs.readFileSync(`counters/${this.name}.txt`, 'utf-8');
@@ -82,27 +211,6 @@ function templateCallback(messageObject) {
 
 // }
 
-const bop = new TwitchCommand('bop', bopCallback);
-function bopCallback(messageObject) {
-  if (!fs.existsSync(`counters/${this.name}.txt`)) {
-    fs.writeFileSync(`counters/${this.name}.txt`, 0);
-  }
-  let currentBops = fs.readFileSync(`counters/${this.name}.txt`, 'utf-8');
-
-  currentBops *= 1;
-  let newBops;
-
-  if (Number.isNaN(currentBops)) {
-    newBops = 0;
-  } else {
-    newBops = currentBops + 1;
-  }
-
-  fs.writeFileSync(`counters/${this.name}.txt`, newBops);
-
-  messageObject.addResponse(`Chat has been bpped for being horny on main bexxteXcite They have been horny ${newBops} times so far for Yakuza.`);
-}
-
 
 // const goals = new TwitchCommand('goals', goalsCallback);
 // function goalsCallback(messageObject) {
@@ -117,6 +225,26 @@ function bopCallback(messageObject) {
 //     "December 30th is Not Quite New Years: Round 2! Starting at 2PM eastern I'll be streaming for twelve hours as a celebration for this past year of streams and party with chat! We'll follow up from last year's stream with Spyro 2, a Fishing Minigame tier list, Alien Isolation Nightmare mode, Steam Giftcard Giveaways, and more!"
 //   )
 // }
+
+const donate = new TwitchCommand('donate', donateCallback);
+function donateCallback(messageObject) {
+  messageObject.addResponse(
+    "For $5 you get a random doodle, at $15 you get to choose what I draw for you (sfw). You can only get 2 drawings per donation. I'll do these in a bad art stream near the end of the month. If you'd like to donate to support the National Children's Alliance and their campaign against child abuse, click here: https://donate.tiltify.com/@bexxters/itsyourbusiness Thank you for your generosity!"
+  )
+}
+
+const nca = new TwitchCommand('nca', ncaCallback);
+function ncaCallback(messageObject)  {
+  messageObject.addResponse(
+    "Child abuse thrives when good people decide it’s none of their business. Throughout the month of April, we will be raising funds for The National Children's Alliance. The NCA maintains thousands of Child Advocacy Centers - safe havens for children to grow, recover, and achieve justice. Find out more about how the NCA helps children here: https://www.nationalchildrensalliance.org"
+  )
+}
+//const ms = new TwitchCommand('ms', msCallback);
+//function msCallback(messageObject) {
+//  messageObject.addResponse(
+//    "Multiple Sclerosis is a disease that impacts the nervous system. It causes the immune system to damage myelin, the coating of our nerve fibers. This causes an array symptoms such as numbness, tingling, mood changes, memory problems, pain, fatigue, or in extreme cases - blindness and/or paralysis. There is currently no known cause or cure."
+//  )
+//}
 
 //
 // BASIC COMMANDS
@@ -175,14 +303,14 @@ function musicCallback(messageObject) {
 const prime = new TwitchCommand('prime', primeCallback);
 function primeCallback(messageObject) {
   messageObject.addResponse(
-    '​Link your amazon prime to twitch and get a free sub every month, ya nerds'
+    'Link your amazon prime to twitch to get a free sub every month and put those Bezos Bucks to work'
   )
 }
 
 const raid = new TwitchCommand('raid', raidCallback, 0, true);
 function raidCallback(messageObject) {
   messageObject.addResponse(
-    `​Welcome and thank you for the raid! When people raid, they sadly don't count to twitch averages, so it would be a big help if you could get rid of the '?referrer=raid' in the url! I appreciate you so much! bexxteLove`
+    `Welcome and thank you for the raid! When people raid, they sadly don't count to twitch averages, so it would be a big help if you could get rid of the '?referrer=raid' in the url! I appreciate you so much! bexxteLove`
   )
 }
 
@@ -452,7 +580,7 @@ function uptimeCallback(messageObject) {
 const whomst = new TwitchCommand('whomst', whomstCallback, 2000);
 function whomstCallback(messageObject) {
   messageObject.addResponse(
-    "​I'm a Variety Streamer mostly streaming RPGs, Horror, and Indie stuff because I'm not good at Battle Royale FPS games and can't commit to MMOs. You can catch me live five to six nights a week at 8:00pm EST! We do Spooky Sunday with horror/suspense games every Sunday!"
+    "​I'm a Variety Streamer mostly streaming RPGs, Horror, and Indie stuff because I'm not good at Battle Royale FPS games and can't commit to MMOs. You can catch me live Sunday through Thursday at 8:00pm EST! We do Spooky Sunday with horror/suspense games every Sunday!"
   )
 }
 
@@ -537,9 +665,6 @@ function raidingCallback(messageObject) {
     case 'love':
       raidingMessage = 'Bexxters Raid bexxteLove bexxteLove';
       break;
-    case 'kiwi':
-      raidingMessage = 'Kindred Kiwi Raid bexxteLove bexxteLove';
-      break;
     case 'vibe':
       raidingMessage = 'Bexxters Raid bexxteBop bexxteBop';
       break;
@@ -547,7 +672,7 @@ function raidingCallback(messageObject) {
       raidingMessage = 'Bexxters Raid bexxteGun bexxteGun';
       break;
     default:
-      raidingMessage = 'The !raiding command can be followed by any of these: cozy, love, kiwi, vibe, aggro';
+      raidingMessage = 'The !raiding command can be followed by any of these: cozy, love, vibe, aggro';
       break;
   }
 
@@ -570,14 +695,6 @@ function bexxtebotCallback(messageObject) {
   )
 }
 
-/*
-const donate = new TwitchCommand('donate', donateCallback);
-function donateCallback(messageObject) {
-  messageObject.addResponse(
-    'Ghostcon is raising money for the National Alliance on Mental Illness - you can donate here: https://tiltify.com/+ghostcon-2021/scaring-is-caring-ghostcon-2021'
-  )
-}
-*/
 
 const quote = new TwitchCommand('quote', quoteCallback);
 const quoteCatalog = bexxteConfig.quotes;
@@ -670,7 +787,7 @@ function martaCallback(messageObject) {
 const tim = new TwitchCommand('tim', timCallback, 5000);
 function timCallback(messageObject) {
   messageObject.addResponse(
-    '​my partner of 6 years. person I complain to when my stream randomly dies. pretty cool dude.'
+    '​my partner of 7 years. person I complain to when my stream randomly dies. pretty cool dude.'
   )
 }
 

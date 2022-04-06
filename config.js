@@ -1,16 +1,16 @@
 exports.bexxteConfig = {
 
   schedule: {
-    sunday: "Fears to Fathom",
-    monday: "Yakuza 4",
-    tuesday: "Hatoful Boyfriend/DBD Ringu",
+    sunday: "Ghostwire Tokyo",
+    monday: "DBD",
+    tuesday: "Fornite/DBD",
     wednesday: "Yakuza 4",
-    thursday: "Hatoful Boyfriend",
+    thursday: "???",
     friday: "",
     saturday: ""
   },
 
-  playlist: 'https://www.youtube.com/watch?v=aL14iT2ix0w',
+  playlist: 'https://www.youtube.com/playlist?list=PLLEnbi5KRv6YT7bqsJ0ejTIIHqd_4c0rA',
 
   contentWarning: '',
 
