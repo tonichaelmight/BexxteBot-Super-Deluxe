@@ -70,37 +70,59 @@ function templateCallback(messageObject) {
 // CURRENT WORK
 class TwitchCounterCommand extends TwitchCommand {
 
-  constructor(name, callback, cooldown_ms = 10000, modOnly = false) {
-    super(name, callback, cooldown_ms = 10000, modOnly = false);
+  constructor(name, callback, cooldown_ms = 10000) {
+    super(name, callback, cooldown_ms = 10000);
     twitchCommands[name] = this;
+    twitchCommands[`${name}s`] = this;
   }
 
-  async evaluateForArgument(messageObject) {
+  async evaluateMessage(messageObject) {
     const messageWords = messageObject.content.split(' ');
-    const possibleArgument = messageWords[1];
+    const command = messageWords[0].slice(1);
+    const evaluation = {};
 
-    if (possibleArgument === 'set') {
-      let secondArgument = messageWords[2];
-      secondArgument *= 1;
+    console.log(command);
 
-      if (Number.isNaN(secondArgument)) {
-        return false;
+    if (command === this.name) {
+      if (messageObject.tags.mod || messageObject.tags.username === ev.CHANNEL_NAME) {
+        if (messageWords[1] === 'set') {
+          evaluation.action = 'set';
+          const newValue = messageWords[2];
+          const setSuccess = await this.setValue(newValue);
+          if (setSuccess) {
+            evaluation.successful = true;
+            evaluation.endValue = newValue;
+          } else {
+            evaluation.successful = false;
+            evaluation.endValue = await this.getValue();
+            evaluation.attempt = newValue;
+          }
+        } else {
+          console.log('hi');
+          evaluation.action = 'add';
+          const currentValue = await this.getValue();
+          const newValue = currentValue * 1 + 1;
+          await this.setValue(newValue);
+          evaluation.endValue = newValue;
+        }
       } else {
-        await this.setValue(secondArgument);
-        return 'set';
+        return;
       }
-    } 
-
-    if (possibleArgument === 'add' || possibleArgument === '+') {
-      const currentValue = await this.getValue();
-      await this.setValue(currentValue * 1 + 1);
-      return 'add';
+    } else if (command === `${this.name}s`) {
+      evaluation.action = 'show';  
+      evaluation.endValue = await this.getValue();
     }
+
+    return evaluation;
+    
   }
 
   async setValue(newValue) {
+    if (Number.isNaN(newValue * 1)) {
+      return false;
+    }
     await db.set(this.name, newValue);
-    return;
+    return true;
   }
 
   async getValue() {
@@ -122,18 +144,23 @@ class TwitchCounterCommand extends TwitchCommand {
       }
     }
 
-    let argument = false;
+    let evaluation;
 
     if (messageObject.tags.mod || messageObject.tags.username === ev.CHANNEL_NAME) {
-      argument = await this.evaluateForArgument(messageObject);
+      evaluation = await this.evaluateMessage(messageObject);
     }
+
+    //console.log(evaluation);
 
     if (this.cooldown_ms) {
       this.createCooldown();
     }
 
     try {
-      await this.callback(messageObject, argument);
+      if (!evaluation) {
+        return;
+      }
+      await this.callback(messageObject, evaluation);
       return;
     } catch (e) {
       console.log(`Problem executing the ${this.name} command`);
@@ -143,48 +170,62 @@ class TwitchCounterCommand extends TwitchCommand {
 }
 
 const test = new TwitchCounterCommand('test', testCallback);
-async function testCallback(messageObject, argument) {
-
-  const currentValue = await this.getValue();
+async function testCallback(messageObject, evaluation) {
   
-  switch (argument) {
+  switch (evaluation.action) {
     case 'set':
-      messageObject.addResponse(
-        `You have set the test count to ${currentValue}.`
-      )
-      break;
+      if (evaluation.successful) {
+        messageObject.addResponse(
+        `You have set the test count to ${evaluation.endValue}.`
+        )
+        break;
+      } else {
+        messageObject.addResponse(
+        `Sorry, I was not able to set the test count to "${evaluation.attempt}". Please make sure you use a number argument. The current test count is ${evaluation.endValue}.`
+        )
+        break;
+      }
+      
     case 'add':
       messageObject.addResponse(
-        `You have increased the test value by 1. The new test value is ${currentValue}.`
+        `You have increased the test value by 1. The new test value is ${evaluation.endValue}.`
       )
       break;
-    default:
+      
+    case 'show':
       messageObject.addResponse(
-        `The current test value is ${currentValue}.`
+        `The current test value is ${evaluation.endValue}.`
       )
       break;
   }
 }
 
 const bop = new TwitchCounterCommand('bop', bopCallback);
-async function bopCallback(messageObject, argument) {
+async function bopCallback(messageObject, evaluation) {
 
-  const currentValue = await this.getValue();
-  
-  switch (argument) {
+  switch (evaluation.action) {
     case 'set':
-      messageObject.addResponse(
-        `You have set the number of bops to ${currentValue} bexxteBonk`
-      )
-      break;
+      if (evaluation.successful) {
+        messageObject.addResponse(
+          `You have set the number of bops to ${evaluation.endValue} bexxteBonk`
+        )
+        break;
+      } else {
+        messageObject.addResponse(
+        `Sorry, I was not able to set !bops to "${evaluation.attempt}". Please make sure you use a number. Currently, chat has been bopped ${evaluation.endValue} times.`
+        )
+        break;
+      }
+      
     case 'add':
       messageObject.addResponse(
-        `Chat has been bopped for being horny on main bexxteBonk They have been horny ${currentValue} times so far for Yakuza.`
+        `Chat has been bopped for being horny on main bexxteBonk Y'all been horny (at least) ${evaluation.endValue} times so far for Yakuza.`
       )
       break;
-    default:
+      
+    case 'show':
       messageObject.addResponse(
-        `Chat has been horny for Yakuza ${currentValue} times`
+        `Chat has been horny for Yakuza ${evaluation.endValue} times`
       )
       break;
   }
@@ -226,12 +267,12 @@ async function bopCallback(messageObject, argument) {
 //   )
 // }
 
-const donate = new TwitchCommand('donate', donateCallback);
-function donateCallback(messageObject) {
-  messageObject.addResponse(
-    "For $5 you get a random doodle, at $15 you get to choose what I draw for you (sfw). You can only get 2 drawings per donation. I'll do these in a bad art stream near the end of the month. If you'd like to donate to support the National Children's Alliance and their campaign against child abuse, click here: https://donate.tiltify.com/@bexxters/itsyourbusiness Thank you for your generosity!"
-  )
-}
+// const donate = new TwitchCommand('donate', donateCallback);
+// function donateCallback(messageObject) {
+//   messageObject.addResponse(
+//     "For $5 you get a random doodle, at $15 you get to choose what I draw for you (sfw). You can only get 2 drawings per donation. I'll do these in a bad art stream near the end of the month. If you'd like to donate to support the National Children's Alliance and their campaign against child abuse, click here: https://donate.tiltify.com/@bexxters/itsyourbusiness Thank you for your generosity!"
+//   )
+// }
 
 const nca = new TwitchCommand('nca', ncaCallback);
 function ncaCallback(messageObject)  {

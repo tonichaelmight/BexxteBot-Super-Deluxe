@@ -1,20 +1,30 @@
 exports.bexxteConfig = {
 
   schedule: {
-    sunday: "Ghostwire Tokyo",
-    monday: "DBD",
-    tuesday: "Fornite/DBD",
-    wednesday: "Yakuza 4",
-    thursday: "???",
+    sunday: "Discord Anime Night",
+    monday: "Ghostwire Tokyo",
+    tuesday: "DBD",
+    wednesday: "Ghostwire Tokyo",
+    thursday: "Elden Ring",
     friday: "",
     saturday: ""
   },
 
-  playlist: 'https://www.youtube.com/playlist?list=PLLEnbi5KRv6YT7bqsJ0ejTIIHqd_4c0rA',
+  playlist: 'https://www.youtube.com/watch?v=_TsTCFs5Cng',
 
   contentWarning: '',
 
   discordServerLink: 'https://discord.gg/fTVu3xNxXa',
+
+  timerCommands: [
+    'discord',
+    'prime',
+    'follow',
+    'sub',
+    'bexxtebot',
+    'bttv',
+    'schedule'
+  ],
 
   quotes: [
     "Enjoy your suffering byeeee! <3",

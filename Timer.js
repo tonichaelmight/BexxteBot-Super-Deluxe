@@ -1,5 +1,6 @@
 const ev = require('./ev.js'); // environment variables
 const { bexxters } = require('./bexxters.js');
+const { bexxteConfig } = require('./config.js');
 
 // TIMER CLASS
 class Timer {
@@ -40,17 +41,6 @@ class Timer {
   }
 }
 
-const twitchTimer = new Timer([
-  'discord',
-  'prime',
-  'follow',
-  'sub',
-  'bexxtebot',
-  'bttv',
-  'goals',
-  'schedule',
-  'donate',
-  'ms',
-]);
+const twitchTimer = new Timer(bexxteConfig.timerCommands);
 
 module.exports = { twitchTimer };
