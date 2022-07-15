@@ -37,6 +37,7 @@ class Timer {
         //console.log(result);
         resolve(result);
       }, Math.floor(Math.random() * 1380000) + 720000);
+      // 12 - 35 minutes
     }); 
   }
 }

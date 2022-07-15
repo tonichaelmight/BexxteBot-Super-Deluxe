@@ -44,28 +44,18 @@ const bexxteBot = {
 
       // there are no errors expected here, so if something does happen it gets logged in error.txt and we keep the program running (otherwise bexxteBot stops :/ )
       } catch(error) {
-
-        throw error;
-
-        try {
-          const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'America/New_York', timeZoneName: 'short' });
-          const datePlusError = `${currentDateAndTime} :: ${error}\n`;
-          fs.appendFile('error.txt', datePlusError, appendError => {
-            if (appendError) throw appendError;
-          });
-
-          const context = '\nencountered an error while reading a message\n';
-          fs.appendFile('error.txt', context, appendError => {
-            if (appendError) throw appendError;
-          });
-
-        // in case for some reason it fails to write to error.txt
-        } catch (innerError) {
         
-          console.log('\nan error occurred while trying to log an error :/\n');
-          console.log(innerError);
+        const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'America/New_York', timeZoneName: 'short' });
+        const datePlusError = `${currentDateAndTime} :: ${error}\n`;
+        fs.appendFile('error.txt', datePlusError, appendError => {
+          if (appendError) throw appendError;
+        });
 
-        }
+        const context = `\nencountered an error while reading a message\n${error}`;
+        fs.appendFile('error.txt', context, appendError => {
+          if (appendError) throw appendError;
+        });
+        
       }
       
     })

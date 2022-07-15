@@ -274,12 +274,12 @@ async function bopCallback(messageObject, evaluation) {
 //   )
 // }
 
-const nca = new TwitchCommand('nca', ncaCallback);
-function ncaCallback(messageObject)  {
-  messageObject.addResponse(
-    "Child abuse thrives when good people decide it’s none of their business. Throughout the month of April, we will be raising funds for The National Children's Alliance. The NCA maintains thousands of Child Advocacy Centers - safe havens for children to grow, recover, and achieve justice. Find out more about how the NCA helps children here: https://www.nationalchildrensalliance.org"
-  )
-}
+//const nca = new TwitchCommand('nca', ncaCallback);
+//function ncaCallback(messageObject)  {
+//  messageObject.addResponse(
+//    "Child abuse thrives when good people decide it’s none of their business. Throughout the month of April, we will be raising funds for The National Children's Alliance. The NCA maintains thousands of Child Advocacy Centers - safe havens for children to grow, recover, and achieve justice. Find out more about how the NCA helps children here: https://www.nationalchildrensalliance.org"
+//  )
+//}
 //const ms = new TwitchCommand('ms', msCallback);
 //function msCallback(messageObject) {
 //  messageObject.addResponse(
@@ -306,7 +306,6 @@ function bttvCallback(messageObject) {
         WELCOME 
         nutButton 
         ChefsKiss 
-        AerithBop 
         KEKW 
         OhMyPoggies 
         peepoRiot

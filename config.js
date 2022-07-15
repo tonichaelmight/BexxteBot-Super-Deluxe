@@ -1,20 +1,20 @@
 exports.bexxteConfig = {
 
   schedule: {
-    sunday: "Discord Anime Night",
-    monday: "Ghostwire Tokyo",
-    tuesday: "DBD",
-    wednesday: "Ghostwire Tokyo",
-    thursday: "Elden Ring",
+    sunday: "Landlord of the Woods",
+    monday: "Yakuza 5",
+    tuesday: "Fortnite",
+    wednesday: "DBD",
+    thursday: "Tales/DBD",
     friday: "",
     saturday: ""
   },
 
-  playlist: 'https://www.youtube.com/watch?v=_TsTCFs5Cng',
+  playlist: 'https://www.youtube.com/watch?v=tU2vmz-ibS8',
 
   contentWarning: '',
 
-  discordServerLink: 'https://discord.gg/fTVu3xNxXa',
+  discordServerLink: 'https://discord.gg/bdMQHsd',
 
   timerCommands: [
     'discord',
@@ -23,7 +23,9 @@ exports.bexxteConfig = {
     'sub',
     'bexxtebot',
     'bttv',
-    'schedule'
+    'schedule',
+    'pride',
+    'youtube', 
   ],
 
   quotes: [
