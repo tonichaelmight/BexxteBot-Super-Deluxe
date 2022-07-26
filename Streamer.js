@@ -1,24 +1,27 @@
-const ev = require('./ev.js'); 
+const ev = require('./ev.js');
 const https = require('https');
+const { logError } = require('./utils.js');
 
-const streamer = 'bexxters' //ev.CHANNEL_NAME;
+class Streamer {
 
-const bexxters = {
+  constructor(username) {
+    this.username = username;
+  }
 
-  async isLive() {
-
-    let live = undefined;
-    let requestResult = '';
+  async getCurrentStreamerData() {
 
     const channelRequestOptions = {
       hostname: 'api.twitch.tv',
       method: 'GET',
-      path: `/helix/search/channels?query=${streamer}`,
+      path: `/helix/search/channels?query=${this.username}`,
       headers: {
         'Authorization': `Bearer ${ev.BEXXTEBOT_TOKEN}`,
         'Client-id': ev.CLIENT_ID
       }
     }
+
+    let requestResult = '';
+    let streamerData = '';
 
     const channelInfoRequest = https.request(channelRequestOptions, res => {
 
@@ -31,7 +34,7 @@ const bexxters = {
 
           let channelData;
           for (const channelObject of requestResult.data) {
-            if (channelObject.broadcaster_login === streamer) {
+            if (channelObject.broadcaster_login === this.username) {
               channelData = channelObject;
               break;
             }
@@ -41,49 +44,39 @@ const bexxters = {
             return null;
           }
 
-          if (channelData.is_live) {
-            live = true;
-          } else {
-            live = false;
-          }
+          streamerData = channelData;
 
         } catch (e) {
           if (!(e.name === 'SyntaxError' && e.message === 'Unexpected end of JSON input')) {
-            try {
-              const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' });
-              const datePlusError = `\n${currentDateAndTime} :: ${e}\n`;
-              fs.appendFile('error.txt', datePlusError, appendError => {
-                if (appendError) throw appendError;
-              });
-            } catch (innerError) {
-              console.log('an error occurred while trying to log an error :/');
-              console.log(innerError);
-            }
+            logError(e, 'Streamer.js');
           }
         }
 
       });
 
-    }); 
+    });
 
     channelInfoRequest.on('error', error => {
       console.log(error);
     })
 
     channelInfoRequest.end();
-    
+
     let cycles = 0;
 
     return new Promise(resolve => {
       const resolutionTimeout = setInterval(() => {
-        if (live !== undefined || cycles > 20) {
-          resolve(live);
+        if (streamerData || cycles > 20) {
+          //console.log(streamerData);
+          resolve(streamerData);
           clearInterval(resolutionTimeout);
         }
         cycles++;
       }, 250)
     })
-  }
-}
-module.exports = { bexxters };
 
+  }
+
+}
+
+module.exports = { Streamer };

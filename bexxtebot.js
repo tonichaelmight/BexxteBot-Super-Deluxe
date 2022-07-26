@@ -10,7 +10,8 @@ const twitch = require('tmi.js'); // twitch tingz
 const { TwitchMessage } = require('./TwitchMessage.js');
 const { twitchCommands } = require('./TwitchCommand.js');
 const { bexxteConfig } = require('./config.js');
-const { twitchTimer } = require('./Timer.js');
+const { twitchTimer, dwarvenVowTimer } = require('./Timer.js');
+const { logError } = require('./utils.js');
 
 // THE QUEEN AND LEGEND HERSELF
 const bexxteBot = {
@@ -45,16 +46,7 @@ const bexxteBot = {
       // there are no errors expected here, so if something does happen it gets logged in error.txt and we keep the program running (otherwise bexxteBot stops :/ )
       } catch(error) {
         
-        const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'America/New_York', timeZoneName: 'short' });
-        const datePlusError = `${currentDateAndTime} :: ${error}\n`;
-        fs.appendFile('error.txt', datePlusError, appendError => {
-          if (appendError) throw appendError;
-        });
-
-        const context = `\nencountered an error while reading a message\n${error}`;
-        fs.appendFile('error.txt', context, appendError => {
-          if (appendError) throw appendError;
-        });
+        logError(error, 'bexxtebot.js');
         
       }
       
@@ -204,6 +196,29 @@ const bexxteBot = {
 
     }
 
+  },
+
+  async activateDwarvenVowTimer() {
+
+    while (true) {
+
+      vow = await dwarvenVowTimer.getTimerOutput();
+
+      if (!vow) continue;
+
+      const dummyMessage = new TwitchMessage(
+        ev.CHANNEL_NAME,
+        { mod: true, username: '' },
+        '',
+        false
+      );
+
+      dummyMessage.addResponse(vow);
+
+      this.speakInTwitch(dummyMessage);
+      
+    }
+    
   }
 
 }
@@ -211,3 +226,4 @@ const bexxteBot = {
 bexxteBot.establishTwitchClient();
 //bexxteBot.establishDiscordClient();
 bexxteBot.activateTwitchTimer();
+bexxteBot.activateDwarvenVowTimer();

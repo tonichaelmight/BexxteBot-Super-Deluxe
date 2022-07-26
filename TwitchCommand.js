@@ -4,7 +4,8 @@ const ev = require('./ev.js'); // environment variables
 const { bexxteConfig } = require('./config.js');
 const https = require('https');
 const fs = require('fs');
-const { bexxters } = require('./bexxters.js');
+const { logError } = require('./utils.js');
+const { Streamer } = require('./Streamer.js');
 
 const Database = require("@replit/database");
 const db = new Database();
@@ -45,8 +46,8 @@ class TwitchCommand {
       await this.callback(messageObject);
       return;
     } catch (e) {
-      console.log(`Problem executing the ${this.name} command`);
-      throw e;
+      logError(`Problem executing the ${this.name} command`, 'TwitchCommand.js');
+      logError(e, 'TwitchCommand.js');
     }
   }
 }
@@ -71,7 +72,7 @@ function templateCallback(messageObject) {
 class TwitchCounterCommand extends TwitchCommand {
 
   constructor(name, callback, cooldown_ms = 10000) {
-    super(name, callback, cooldown_ms = 10000);
+    super(name, callback, cooldown_ms);
     twitchCommands[name] = this;
     twitchCommands[`${name}s`] = this;
   }
@@ -109,12 +110,12 @@ class TwitchCounterCommand extends TwitchCommand {
         return;
       }
     } else if (command === `${this.name}s`) {
-      evaluation.action = 'show';  
+      evaluation.action = 'show';
       evaluation.endValue = await this.getValue();
     }
 
     return evaluation;
-    
+
   }
 
   async setValue(newValue) {
@@ -128,11 +129,11 @@ class TwitchCounterCommand extends TwitchCommand {
   async getValue() {
 
     let currentValue = await db.get(this.name);
-    
+
     if (!currentValue) {
       currentValue = 0;
     }
-    
+
     return currentValue;
   }
 
@@ -171,27 +172,27 @@ class TwitchCounterCommand extends TwitchCommand {
 
 const test = new TwitchCounterCommand('test', testCallback);
 async function testCallback(messageObject, evaluation) {
-  
+
   switch (evaluation.action) {
     case 'set':
       if (evaluation.successful) {
         messageObject.addResponse(
-        `You have set the test count to ${evaluation.endValue}.`
+          `You have set the test count to ${evaluation.endValue}.`
         )
         break;
       } else {
         messageObject.addResponse(
-        `Sorry, I was not able to set the test count to "${evaluation.attempt}". Please make sure you use a number argument. The current test count is ${evaluation.endValue}.`
+          `Sorry, I was not able to set the test count to "${evaluation.attempt}". Please make sure you use a number argument. The current test count is ${evaluation.endValue}.`
         )
         break;
       }
-      
+
     case 'add':
       messageObject.addResponse(
         `You have increased the test value by 1. The new test value is ${evaluation.endValue}.`
       )
       break;
-      
+
     case 'show':
       messageObject.addResponse(
         `The current test value is ${evaluation.endValue}.`
@@ -212,31 +213,31 @@ async function bopCallback(messageObject, evaluation) {
         break;
       } else {
         messageObject.addResponse(
-        `Sorry, I was not able to set !bops to "${evaluation.attempt}". Please make sure you use a number. Currently, chat has been bopped ${evaluation.endValue} times.`
+          `Sorry, I was not able to set !bops to "${evaluation.attempt}". Please make sure you use a number. Currently, chat has been bopped ${evaluation.endValue} times.`
         )
         break;
       }
-      
+
     case 'add':
       messageObject.addResponse(
         `Chat has been bopped for being horny on main bexxteBonk Y'all been horny (at least) ${evaluation.endValue} times so far for Yakuza.`
       )
       break;
-      
+
     case 'show':
       messageObject.addResponse(
         `Chat has been horny for Yakuza ${evaluation.endValue} times`
       )
       break;
   }
-  
+
 }
 
 
 // const test = new TwitchCommand('test', testCallback);
 // function testCallback(messageObject) {
 //   let current = fs.readFileSync(`counters/${this.name}.txt`, 'utf-8');
-  
+
 //   current *= 1;
 //   let neue;
 
@@ -356,16 +357,14 @@ function raidCallback(messageObject) {
 
 // shoutout
 const so = new TwitchCommand('so', soCallback, 0, true);
-function soCallback(messageObject) {
+async function soCallback(messageObject) {
   let recipient = messageObject.content.split(' ')[1];
-
-  console.log(recipient);
 
   if (!recipient) {
     return;
   }
 
-  if (recipient.startsWith('@')) {
+  while (recipient.startsWith('@')) {
     recipient = recipient.slice(1);
   }
 
@@ -383,102 +382,28 @@ function soCallback(messageObject) {
     return;
   }
 
-  let requestResult = '';
+  let streamerData = await new Streamer(recipient).getCurrentStreamerData();
 
   let shoutout = '';
 
-  const channelRequestOptions = {
-    hostname: 'api.twitch.tv',
-    method: 'GET',
-    path: `/helix/search/channels?query=${recipient}`,
-    headers: {
-      'Authorization': `Bearer ${ev.BEXXTEBOT_TOKEN}`,
-      'Client-id': ev.CLIENT_ID
+  if (!streamerData.game_name) {
+    shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! bexxteLove`;
+  } else if (streamerData.is_live) {
+    if (streamerData.game_name === 'Just Chatting') {
+      shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They are currently "${streamerData.game_name}" bexxteLove`;
+    } else {
+      shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They are currently playing "${streamerData.game_name}" bexxteLove`;
+    }
+    // or offline
+  } else {
+    if (streamerData.game_name === 'Just Chatting') {
+      shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They were last seen "${streamerData.game_name}" bexxteLove`;
+    } else {
+      shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They were last seen playing "${streamerData.game_name}" bexxteLove`;
     }
   }
 
-  const channelInfoRequest = https.request(channelRequestOptions, res => {
-
-    res.on('data', data => {
-      requestResult += data;
-
-      try {
-
-        requestResult = JSON.parse(requestResult);
-
-        // console.log(requestResult);
-
-        let channelData;
-        for (const channelObject of requestResult.data) {
-          if (channelObject.broadcaster_login === recipient) {
-            channelData = channelObject;
-            break;
-          }
-        }
-        // console.log('hi');
-
-        if (!channelData) {
-          return null;
-        }
-
-        // console.log(channelData);
-
-        if (!channelData.game_name) {
-          shoutout += `Everyone go check out @${channelData.display_name} at twitch.tv/${channelData.broadcaster_login}! bexxteLove`;
-          return;
-        }
-
-        if (channelData.is_live) {
-          if (channelData.game_name === 'Just Chatting') {
-            shoutout += `Everyone go check out @${channelData.display_name} at twitch.tv/${channelData.broadcaster_login}! They are currently "${channelData.game_name}" bexxteLove`;
-          } else {
-            shoutout += `Everyone go check out @${channelData.display_name} at twitch.tv/${channelData.broadcaster_login}! They are currently playing "${channelData.game_name}" bexxteLove`;
-          }
-          // or offline
-        } else {
-          if (channelData.game_name === 'Just Chatting') {
-            shoutout += `Everyone go check out @${channelData.display_name} at twitch.tv/${channelData.broadcaster_login}! They were last seen "${channelData.game_name}" bexxteLove`;
-          } else {
-            shoutout += `Everyone go check out @${channelData.display_name} at twitch.tv/${channelData.broadcaster_login}! They were last seen playing "${channelData.game_name}" bexxteLove`;
-          }
-        }
-
-      } catch (e) {
-        if (!(e.name === 'SyntaxError' && e.message === 'Unexpected end of JSON input')) {
-          try {
-            const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' });
-            const datePlusError = `\n${currentDateAndTime} :: ${e}\n`;
-            fs.appendFile('error.txt', datePlusError, appendError => {
-              if (appendError) throw appendError;
-            });
-          } catch (innerError) {
-            console.log('an error occurred while trying to log an error :/');
-            console.log(innerError);
-          }
-        }
-      }
-    })
-  })
-
-  channelInfoRequest.on('error', error => {
-    console.log(error);
-  })
-
-  // console.log(shoutout);
-
-  channelInfoRequest.end();
-
-  return new Promise(resolve => {
-    let cycles = 0;
-    const resolutionTimeout = setInterval(() => {
-      if (shoutout || cycles >= 20) {
-        messageObject.addResponse(shoutout);
-        resolve(true);
-        clearInterval(resolutionTimeout);
-      }
-      cycles++;
-    }, 250)
-  });
+  messageObject.addResponse(shoutout);
 
 } // end soCallback
 
@@ -490,137 +415,62 @@ function subCallback(messageObject) {
 }
 
 const uptime = new TwitchCommand('uptime', uptimeCallback);
-function uptimeCallback(messageObject) {
-  const streamer = ev.CHANNEL_NAME;
-
-  let requestResult = '';
+async function uptimeCallback(messageObject) {
+  let streamerData = await new Streamer('lachlie').getCurrentStreamerData();
 
   let uptimeOutput = '';
 
-  const channelRequestOptions = {
-    hostname: 'api.twitch.tv',
-    method: 'GET',
-    path: `/helix/search/channels?query=${streamer}`,
-    headers: {
-      'Authorization': `Bearer ${ev.BEXXTEBOT_TOKEN}`,
-      'Client-id': ev.CLIENT_ID
+  if (!streamerData.is_live) {
+    uptimeOutput = `Sorry, doesn't look like ${streamerData.display_name} is live right now. Check back again later!`;
+  } else {
+
+    const currentTime = Date.now();
+    const startTime = Date.parse(streamerData.started_at);
+    let elapsedTime = currentTime - startTime;
+
+    const hours = Math.floor(elapsedTime / (60000 * 60));
+    elapsedTime = elapsedTime % (60000 * 60);
+
+    const minutes = Math.floor(elapsedTime / 60000);
+    elapsedTime = elapsedTime % 60000;
+
+    const seconds = Math.floor(elapsedTime / 1000);
+
+    uptimeOutput += streamerData.display_name;
+    uptimeOutput += ' has been live for ';
+
+    if (hours > 1) {
+      uptimeOutput += hours + ' hours, ';
+    } else if (hours === 1) {
+      uptimeOutput += hours + ' hour, ';
     }
+
+    if (minutes !== 1) {
+      uptimeOutput += minutes + ' minutes';
+    } else {
+      uptimeOutput += minutes + ' minute';
+    }
+
+    if (hours) {
+      uptimeOutput += ','
+    }
+
+    if (minutes !== 1) {
+      uptimeOutput += ' and ' + seconds + ' seconds.';
+    } else {
+      uptimeOutput += ' and ' + seconds + ' second.';
+    }
+
   }
 
-  let requestComplete = false;
-
-  const channelInfoRequest = https.request(channelRequestOptions, res => {
-
-    res.on('data', data => {
-      requestResult += data;
-
-      try {
-
-        requestResult = JSON.parse(requestResult);
-
-        let channelData;
-        for (const channelObject of requestResult.data) {
-          if (channelObject.broadcaster_login === streamer) {
-            channelData = channelObject;
-            break;
-          }
-        }
-
-        if (!channelData) {
-          return null;
-        }
-
-        if (!channelData.is_live) {
-          uptimeOutput = `Sorry, doesn't look like ${streamer} is live right now. Check back again later!`;
-        } else {
-
-          const currentTime = Date.now();
-          const startTime = Date.parse(channelData.started_at);
-          let elapsedTime = currentTime - startTime;
-
-          const hours = Math.floor(elapsedTime / (60000 * 60));
-          elapsedTime = elapsedTime % (60000 * 60);
-
-          const minutes = Math.floor(elapsedTime / 60000);
-          elapsedTime = elapsedTime % 60000;
-
-          const seconds = Math.floor(elapsedTime / 1000);
-
-          uptimeOutput += streamer;
-          uptimeOutput += ' has been live for ';
-
-          if (hours > 1) {
-            uptimeOutput += hours + ' hours, ';
-          } else if (hours === 1) {
-            uptimeOutput += hours + ' hour, ';
-          }
-
-          if (minutes !== 1) {
-            uptimeOutput += minutes + ' minutes';
-          } else {
-            uptimeOutput += minutes + ' minute';
-          }
-
-          if (hours) {
-            uptimeOutput += ','
-          }
-
-          if (minutes !== 1) {
-            uptimeOutput += ' and ' + seconds + ' seconds.';
-          } else {
-            uptimeOutput += ' and ' + seconds + ' second.';
-          }
-
-        }
-
-        requestComplete = true;
-
-      } catch (e) {
-        if (!(e.name === 'SyntaxError' && e.message === 'Unexpected end of JSON input')) {
-          try {
-            const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' });
-            const datePlusError = `\n${currentDateAndTime} :: ${e}\n`;
-            fs.appendFile('error.txt', datePlusError, appendError => {
-              if (appendError) throw appendError;
-            });
-          } catch (innerError) {
-            console.log('an error occurred while trying to log an error :/');
-            console.log(innerError);
-          }
-        }
-      }
-    })
-  });
-
-  channelInfoRequest.on('error', error => {
-    console.log(error);
-  })
-
-  channelInfoRequest.end();
-
-  return new Promise(resolve => {
-    let cycles = 0;
-    const resolutionTimeout = setInterval(() => {
-      if (requestComplete) {
-        messageObject.addResponse(uptimeOutput);
-        resolve(true);
-        clearInterval(resolutionTimeout);
-      }
-      if (cycles >= 20) {
-        resolve(true);
-        clearInterval(resolutionTimeout);
-      }
-      cycles++;
-    }, 250)
-
-  });
+  messageObject.addResponse(uptimeOutput);
 
 } // end uptimeCallback
 
 const whomst = new TwitchCommand('whomst', whomstCallback, 2000);
 function whomstCallback(messageObject) {
   messageObject.addResponse(
-    "​I'm a Variety Streamer mostly streaming RPGs, Horror, and Indie stuff because I'm not good at Battle Royale FPS games and can't commit to MMOs. You can catch me live Sunday through Thursday at 8:00pm EST! We do Spooky Sunday with horror/suspense games every Sunday!"
+    "I'm a Variety Streamer mostly streaming RPGs, Horror, and Indie stuff because I'm not good at Battle Royale FPS games and can't commit to MMOs. You can catch me live Sunday through Thursday at 8:00pm EST! We do Spooky Sunday with horror/suspense games every Sunday!"
   )
 }
 
@@ -651,11 +501,12 @@ function cwCallback(messageObject) {
 const stap = new TwitchCommand('stap', stapCallback);
 function stapCallback(messageObject) {
   messageObject.addResponse(
-    '​stop flaming ok! I dnt ned all da negatwiti yo ar geveng me right nau! bexxteGun'
+    'stop flaming ok! I dnt ned all da negatwiti yo ar geveng me right nau! bexxteGun'
   )
 }
 
 const mute = new TwitchCommand('mute', muteCallback);
+const muted = new TwitchCommand('muted', muteCallback);
 function muteCallback(messageObject) {
   messageObject.addResponse(
     `@${ev.CHANNEL_NAME.toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
@@ -827,7 +678,7 @@ function martaCallback(messageObject) {
 const tim = new TwitchCommand('tim', timCallback, 5000);
 function timCallback(messageObject) {
   messageObject.addResponse(
-    '​my partner of 7 years. person I complain to when my stream randomly dies. pretty cool dude.'
+    'my partner of 7 years. person I complain to when my stream randomly dies. pretty cool dude.'
   )
 }
 
@@ -844,7 +695,7 @@ function michaelCallback(messageObject) {
 const yackie = new TwitchCommand('yackie', yackieCallback, 5000);
 function yackieCallback(messageObject) {
   messageObject.addResponse(
-    '​Check out one of my bestest buds and overall cool gal Jackie at twitch.tv/broocat !'
+    'Check out one of my bestest buds and overall cool gal Jackie at twitch.tv/broocat !'
   )
 }
 

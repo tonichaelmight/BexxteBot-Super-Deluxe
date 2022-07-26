@@ -93,6 +93,14 @@ exports.bexxteConfig = {
     'reylo',
     'bigfollows',
     'chilp.it'
+  ],
+
+  dwarvenVows: [
+    'Dwarven Vow #1: Let’s all work together for a more peaceful world.',
+    'Dwarven Vow #2: Never abandon someone in need.',
+    'Dwarven Vow #4: Don’t depend on others. Walk on your own two legs.',
+    'Dwarven Vow #7: Goodness and love will always win.',
+    'Dwarven Vow #11: Lying is the first step down the path of thievery.'
   ]
 
 }
