@@ -36,6 +36,8 @@ class Bot {
     // listens for messages, determined by the "channels" property defined in the connection above
     this.twitchClient.on('message', async (channel, tags, message, self) => {
       const twitchMessage = new TwitchMessage(channel, tags, message, self);
+
+      //console.log(twitchMessage);
       
       try {
 
@@ -71,10 +73,7 @@ class Bot {
     const lurkCheck = /(?<!(\w))!lurk(?!(\w))/;
 
     if (lurkCheck.test(twitchMessage.content)) {
-      twitchMessage.addResponse(
-        `${twitchMessage.tags.username} is now lurkin in the chat shadows. Stay awhile and enjoy! bexxteCozy`
-      )
-      return;
+      return 'lurk';
     }
 
     // console.log(twitchMessage);
@@ -86,10 +85,14 @@ class Bot {
 
     const command = messageWords[0].slice(1);
 
+    return command;    
+
+  }
+
+  async executeTwitchCommand(twitchMessage, command) {
     if (twitchCommands[command]) {
       await twitchCommands[command].execute(twitchMessage);
     }
-
   }
 
   speakInTwitch(twitchMessage) {
@@ -134,10 +137,13 @@ class Bot {
 
     if (twitchMessage.response) {
       this.speakInTwitch(twitchMessage);
+      // if a message gets modded, no need to keep going
       return;
     }
 
-    await this.searchForTwitchCommand(twitchMessage); 
+    const command = await this.searchForTwitchCommand(twitchMessage);
+
+    await this.executeTwitchCommand(twitchMessage, command);
 
     // console.log(twitchMessage);
 
@@ -160,12 +166,7 @@ class Bot {
       }
 
       // passes a dummy message through the system to get bexxteBot to respond to it.
-      const dummyMessage = new TwitchMessage(
-        ev.CHANNEL_NAME,
-        { mod: true, username: '' },
-        `!${command}`,
-        false
-      );
+      const dummyMessage = TwitchMessage.generateDummyMessage(`!${command}`);
 
       await this.processTwitchMessage(dummyMessage);
 
@@ -177,16 +178,11 @@ class Bot {
 
     while (true) {
 
-      vow = await dwarvenVowTimer.getTimerOutput();
+      const vow = await dwarvenVowTimer.getTimerOutput();
 
       if (!vow) continue;
 
-      const dummyMessage = new TwitchMessage(
-        ev.CHANNEL_NAME,
-        { mod: true, username: '' },
-        '',
-        false
-      );
+      const dummyMessage = TwitchMessage.generateDummyMessage();
 
       dummyMessage.addResponse(vow);
 

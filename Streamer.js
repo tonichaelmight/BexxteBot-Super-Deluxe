@@ -5,7 +5,7 @@ const { logError } = require('./utils.js');
 class Streamer {
 
   constructor(username) {
-    this.username = username;
+    this.username = username.startsWith('#') ? username.slice(1) : username;
   }
 
   async getCurrentStreamerData() {

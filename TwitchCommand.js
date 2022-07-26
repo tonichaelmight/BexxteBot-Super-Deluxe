@@ -328,6 +328,13 @@ function followCallback(messageObject) {
   )
 }
 
+const lurk = new TwitchCommand('lurk', lurkCallback);
+function lurkCallback(messageObject) {
+  messageObject.addResponse(
+    `${messageObject.tags.username} is now lurkin in the chat shadows. Stay awhile and enjoy! bexxteCozy`
+  )
+}
+
 const music = new TwitchCommand('music', musicCallback);
 function musicCallback(messageObject) {
   if (bexxteConfig.playlist) {
@@ -416,7 +423,12 @@ function subCallback(messageObject) {
 
 const uptime = new TwitchCommand('uptime', uptimeCallback);
 async function uptimeCallback(messageObject) {
-  let streamerData = await new Streamer('lachlie').getCurrentStreamerData();
+  const streamerData = await new Streamer(messageObject.channel).getCurrentStreamerData();
+
+  // handle this?
+  if (!streamerData) {
+    return;
+  }
 
   let uptimeOutput = '';
 
