@@ -1,6 +1,4 @@
 // if you're trying to make a new command, this is the right page; scroll down a bit further
-
-const ev = require('./ev.js'); // environment variables
 const { bexxteConfig } = require('./configuration.js');
 const { logError } = require('./utils.js');
 const { Streamer } = require('./Streamer.js');
@@ -634,16 +632,16 @@ const socials = new TwitchCommand('socials', socialsCallback);
 function socialsCallback(messageObject) {
   messageObject.addResponse(
     `Come follow me on these other platforms as well!         
-    Twitter: ${ev.TWITTER}      
-    TikTok: ${ev.TIK_TOK}
-    YouTube: ${ev.YOUTUBE}`
+    Twitter: ${bexxteConfig.socials.twitter}      
+    TikTok: ${bexxteConfig.socials.tiktok}
+    YouTube: ${bexxteConfig.socials.youtube}`
   )
 }
 
 const youtube = new TwitchCommand('youtube', youtubeCallback);
 function youtubeCallback(messageObject) {
   messageObject.addResponse(
-    `Check out edited short plays and full stream uploads over on my Youtube: ${ev.YOUTUBE}`
+    `Check out edited short plays and full stream uploads over on my Youtube: ${bexxteConfig.socials.youtube}`
   )
 }
 
