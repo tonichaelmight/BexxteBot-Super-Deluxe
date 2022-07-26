@@ -1,16 +1,16 @@
 exports.bexxteConfig = {
 
   schedule: {
-    sunday: "Landlord of the Woods",
-    monday: "Yakuza 5",
-    tuesday: "Fortnite",
-    wednesday: "DBD",
-    thursday: "Tales/DBD",
+    sunday: "Zelle",
+    monday: "Stray",
+    tuesday: "Tales of Symphonia",
+    wednesday: "Yakuza 5",
+    thursday: "No Stream",
     friday: "",
     saturday: ""
   },
 
-  playlist: 'https://www.youtube.com/watch?v=tU2vmz-ibS8',
+  playlist: 'https://www.youtube.com/watch?v=kCUwIi7qd2M',
 
   contentWarning: '',
 

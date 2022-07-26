@@ -485,7 +485,7 @@ function soCallback(messageObject) {
 const sub = new TwitchCommand('sub', subCallback);
 function subCallback(messageObject) {
   messageObject.addResponse(
-    '​Want ad-free viewing, cute bat emotes, and a cool tombstone next to your name? Hit the subscribe button to support the stream bexxteLove'
+    'Want ad-free viewing, cute bat emotes, and a cool tombstone next to your name? Hit the subscribe button to support the stream bexxteLove'
   )
 }
 
