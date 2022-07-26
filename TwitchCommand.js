@@ -1,7 +1,7 @@
 // if you're trying to make a new command, this is the right page; scroll down a bit further
 
 const ev = require('./ev.js'); // environment variables
-const { bexxteConfig } = require('./config.js');
+const { bexxteConfig } = require('./configuration.js');
 const https = require('https');
 const fs = require('fs');
 const { logError } = require('./utils.js');

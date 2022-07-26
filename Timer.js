@@ -1,6 +1,6 @@
 const ev = require('./ev.js'); // environment variables
 const { Streamer } = require('./Streamer.js');
-const { bexxteConfig } = require('./config.js');
+const { bexxteConfig } = require('./configuration.js');
 
 const bexxters = new Streamer('bexxters');
 

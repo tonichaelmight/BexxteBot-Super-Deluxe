@@ -9,7 +9,7 @@ const twitch = require('tmi.js'); // twitch tingz
 //const discord = require('discord.js');
 const { TwitchMessage } = require('./TwitchMessage.js');
 const { twitchCommands } = require('./TwitchCommand.js');
-const { bexxteConfig } = require('./config.js');
+const { bexxteConfig } = require('./configuration.js');
 const { twitchTimer, dwarvenVowTimer } = require('./Timer.js');
 const { logError } = require('./utils.js');
 
