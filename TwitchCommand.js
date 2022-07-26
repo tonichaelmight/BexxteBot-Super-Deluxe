@@ -2,8 +2,6 @@
 
 const ev = require('./ev.js'); // environment variables
 const { bexxteConfig } = require('./configuration.js');
-const https = require('https');
-const fs = require('fs');
 const { logError } = require('./utils.js');
 const { Streamer } = require('./Streamer.js');
 
@@ -164,8 +162,8 @@ class TwitchCounterCommand extends TwitchCommand {
       await this.callback(messageObject, evaluation);
       return;
     } catch (e) {
-      console.log(`Problem executing the ${this.name} command`);
-      throw e;
+      logError(`Problem executing the ${this.name} command`, 'TwitchCommand.js');
+      logError(e, 'TwitchCommand.js');
     }
   }
 }
