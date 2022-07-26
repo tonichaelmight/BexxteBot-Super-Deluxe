@@ -52,6 +52,6 @@ class Timer {
 }
 
 const twitchTimer = new Timer(bexxteConfig.timerCommands, 720000, 1380000); // 12 - 35 minutes (range 23)
-const dwarvenVowTimer = new Timer(bexxteConfig.dwarvenVows, 720000, 1380000, 'Tales of Symphonia');
+const dwarvenVowTimer = new Timer(bexxteConfig.dwarvenVows, 1800000, 900000, 'Tales of Symphonia'); // 30 - 45 minutes (range 15)
 
 module.exports = { twitchTimer, dwarvenVowTimer };
