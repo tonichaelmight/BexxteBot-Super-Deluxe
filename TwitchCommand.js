@@ -2,8 +2,6 @@
 
 const ev = require('./ev.js'); // environment variables
 const { bexxteConfig } = require('./configuration.js');
-const https = require('https');
-const fs = require('fs');
 const { logError } = require('./utils.js');
 const { Streamer } = require('./Streamer.js');
 
@@ -32,7 +30,7 @@ class TwitchCommand {
 
   async execute(messageObject) {
     //console.log(messageObject);
-    if (!messageObject.tags.mod && !(messageObject.tags.username === ev.CHANNEL_NAME)) {
+    if (!messageObject.tags.mod && !(messageObject.tags.username === messageObject.channel.slice(1))) {
       if (this.modOnly || this.onCooldown) {
         return;
       }
@@ -85,7 +83,7 @@ class TwitchCounterCommand extends TwitchCommand {
     console.log(command);
 
     if (command === this.name) {
-      if (messageObject.tags.mod || messageObject.tags.username === ev.CHANNEL_NAME) {
+      if (messageObject.tags.mod || messageObject.tags.username === messageObject.channel.slice(1)) {
         if (messageWords[1] === 'set') {
           evaluation.action = 'set';
           const newValue = messageWords[2];
@@ -99,7 +97,6 @@ class TwitchCounterCommand extends TwitchCommand {
             evaluation.attempt = newValue;
           }
         } else {
-          console.log('hi');
           evaluation.action = 'add';
           const currentValue = await this.getValue();
           const newValue = currentValue * 1 + 1;
@@ -139,7 +136,7 @@ class TwitchCounterCommand extends TwitchCommand {
 
   async execute(messageObject) {
     //console.log(messageObject);
-    if (!messageObject.tags.mod && !(messageObject.tags.username === ev.CHANNEL_NAME)) {
+    if (!messageObject.tags.mod && !(messageObject.tags.username === messageObject.channel.slice(1))) {
       if (this.modOnly || this.onCooldown) {
         return;
       }
@@ -147,7 +144,7 @@ class TwitchCounterCommand extends TwitchCommand {
 
     let evaluation;
 
-    if (messageObject.tags.mod || messageObject.tags.username === ev.CHANNEL_NAME) {
+    if (messageObject.tags.mod || messageObject.tags.username === messageObject.channel.slice(1)) {
       evaluation = await this.evaluateMessage(messageObject);
     }
 
@@ -164,8 +161,8 @@ class TwitchCounterCommand extends TwitchCommand {
       await this.callback(messageObject, evaluation);
       return;
     } catch (e) {
-      console.log(`Problem executing the ${this.name} command`);
-      throw e;
+      logError(`Problem executing the ${this.name} command`, 'TwitchCommand.js');
+      logError(e, 'TwitchCommand.js');
     }
   }
 }
@@ -375,7 +372,7 @@ async function soCallback(messageObject) {
     recipient = recipient.slice(1);
   }
 
-  if (recipient === ev.CHANNEL_NAME) {
+  if (recipient === messageObject.channel.slice(1)) {
     messageObject.addResponse(
       `@${recipient} is pretty cool, but she doesn't need a shoutout on her own channel.`
     )
@@ -521,13 +518,13 @@ const mute = new TwitchCommand('mute', muteCallback);
 const muted = new TwitchCommand('muted', muteCallback);
 function muteCallback(messageObject) {
   messageObject.addResponse(
-    `@${ev.CHANNEL_NAME.toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
+    `@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
   );
   messageObject.addResponse(
-    `@${ev.CHANNEL_NAME.toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
+    `@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
   );
   messageObject.addResponse(
-    `@${ev.CHANNEL_NAME.toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
+    `@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
   );
 }
 

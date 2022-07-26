@@ -1,4 +1,3 @@
-const ev = require('./ev.js'); // environment variables
 const twitch = require('tmi.js'); // twitch tingz
 const { logError } = require('./utils.js');
 
