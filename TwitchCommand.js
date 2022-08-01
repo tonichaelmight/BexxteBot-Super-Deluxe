@@ -578,23 +578,6 @@ async function bopCallback(messageObject, evaluation) {
 //   );
 // }
 
-// //
-// // PEOPLE
-// //
-
-// const marta = new TwitchCommand('marta', martaCallback, 5000);
-// function martaCallback(messageObject) {
-//   messageObject.addResponse(
-//     '​Check out (and maybe commission) our UwUest mod and amazing artist Marta over at https://twitter.com/_martuwu or https://martuwuu.carrd.co'
-//   )
-// }
-
-// const tim = new TwitchCommand('tim', timCallback, 5000);
-// function timCallback(messageObject) {
-//   messageObject.addResponse(
-//     'my partner of 7 years. person I complain to when my stream randomly dies. pretty cool dude.'
-//   )
-// }
 
 // const michael = new TwitchCommand('michael', michaelCallback, 5000);
 // const michaelQuotes = bexxteConfig.michaelQuotes;
@@ -605,14 +588,6 @@ async function bopCallback(messageObject, evaluation) {
 //     `Humor King tonichaelmight aka my best friend for over half my life??? we're old. As he once said: "${michaelQuotes[i]}"`
 //   )
 // }
-
-// const yackie = new TwitchCommand('yackie', yackieCallback, 5000);
-// function yackieCallback(messageObject) {
-//   messageObject.addResponse(
-//     'Check out one of my bestest buds and overall cool gal Jackie at twitch.tv/broocat !'
-//   )
-// }
-
 
 
 // module.exports = { twitchCommands };

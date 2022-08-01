@@ -43,6 +43,14 @@ const commands = {
 
   youtube: new TwitchCommand('youtube', `Check out edited short plays and full stream uploads over on my Youtube: ${config.socials.youtube}`),
 
+  // PEOPLE COMMANDS -- SUBSET OF BASIC
+
+  marta: new TwitchCommand('marta', '​Check out (and maybe commission) our UwUest mod and amazing artist Marta over at https://twitter.com/_martuwu or https://martuwuu.carrd.co', {cooldown_ms:5000}),
+
+  tim: new TwitchCommand('tim', 'my partner of 7 years. person I complain to when my stream randomly dies. pretty cool dude.', {cooldown_ms:5000}),
+
+  yackie: new TwitchCommand('yackie', 'Check out one of my bestest buds and overall cool gal Jackie at twitch.tv/broocat!', {cooldown_ms:5000}),
+
 };
 
 
