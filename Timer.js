@@ -1,5 +1,5 @@
 const { Streamer } = require('./Streamer.js');
-const { bexxteConfig } = require('./configuration.js');
+const { bexxteConfig } = require('./streamers/bexxters/configuration.js');
 
 const bexxters = new Streamer('bexxters');
 

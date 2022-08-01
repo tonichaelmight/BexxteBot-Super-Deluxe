@@ -4,8 +4,11 @@ const { logError } = require('./utils.js');
 
 class Streamer {
 
-  constructor(username) {
+  constructor(username, commands, config) {
     this.username = username.startsWith('#') ? username.slice(1) : username;
+    this.commands = commands;
+    //console.log(commands);
+    this.config = config;
   }
 
   async getCurrentStreamerData() {

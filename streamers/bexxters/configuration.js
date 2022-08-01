@@ -1,5 +1,9 @@
 exports.bexxteConfig = {
 
+  channelName: 'tonichaelmight',//'bexxters',
+
+  botName: 'bexxtebot',
+
   schedule: {
     sunday: "Zelle",
     monday: "Stray",
