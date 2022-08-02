@@ -1,5 +1,5 @@
 const { logError } = require('../../utils.js');
-const { TwitchCommand, TwitchCallbackCommand, TwitchTimerCommand } = require('../../TwitchCommand.js');
+const { TwitchCommand, TwitchCallbackCommand, AsyncTwitchCallbackCommand, TwitchTimerCommand } = require('../../TwitchCommand.js');
 const { Streamer } = require('../../Streamer.js');
 const { config } = require('./configuration.js');
 
@@ -11,6 +11,8 @@ const commands = {
 
   // BASIC COMMANDS
 
+  // template: new TwitchCommand('template', 'This is a tempalte command. Replace this text with the output you would like to occur'),
+
   bexxtebot: new TwitchCommand('bexxtebot', 'Hey there everyone, my name is BexxteBot! I am a custom chat bot designed specifically for this channel; if you see me do or say anything crazy, make sure to let @bexxters or @tonichaelmight know so that it can be fixed ASAP. Happy Chatting! bexxteLove'),
 
   blm: new TwitchCommand('blm', 'Black Lives Matter. Follow this link to learn about ways you can support the movement: https://blacklivesmatters.carrd.co'),
@@ -20,9 +22,6 @@ const commands = {
   discord: new TwitchCommand('discord', `Join the Basement Party and hang out offline here: ${config.discordServerLink}`),
 
   follow: new TwitchCommand('follow', 'Hit the <3 to follow and get notified whenever I go live! It also makes my cold heart a little bit warmer!'),
-
-  //lurk: new TwitchCommand('lurk', '${messageObject.tags.username} is now lurkin in the chat shadows. Stay awhile and enjoy! bexxteCozy', {refsMessage: true}), 
-  // will rewrite as just having a callback, this is a lil extra
   
   prime: new TwitchCommand('prime', 'Link your amazon prime to twitch to get a free sub every month and put those Bezos Bucks to work'),
 
@@ -51,11 +50,21 @@ const commands = {
 
   yackie: new TwitchCommand('yackie', 'Check out one of my bestest buds and overall cool gal Jackie at twitch.tv/broocat!', {cooldown_ms:5000}),
 
+  // EXCEPT HER
+
+  michael: new TwitchCallbackCommand('michael',
+    () => `Humor King tonichaelmight aka my best friend for over half my life??? we're old. As he once said: "${config.michaelQuotes[Math.floor(Math.random() * config.michaelQuotes.length)]}"`
+  ),
+
   // CALLBACK COMMANDS
 
   cw: new TwitchCallbackCommand('cw',
     () => config.contentWarning || 'The streamer has not designated any content warnings for this game.'
   ),
+
+  lurk: new TwitchCallbackCommand('lurk',
+    (messageObject) => `${messageObject.tags.username} is now lurkin in the chat shadows. Stay awhile and enjoy! bexxteCozy`, 
+    {refsMessage: true}),
 
   music: new TwitchCallbackCommand('music',
     () => config.playlist ? `Today's playlist is ${config.playlist}` : 'this bitch empty, yeet'
@@ -69,6 +78,223 @@ const commands = {
   pitbull: new TwitchCallbackCommand('pitbull',
     () => Math.floor(Math.random() * 2) === 0 ? 'Dale!' : 'Believe me, been there done that. But everyday above ground is a great day, remember that.'
   ),
+
+  pride: new TwitchCallbackCommand('pride',
+    () => {
+      let emoteString = '';
+      let randNum;
+
+      for (let i = 0; i < 10; i++) {
+        randNum = Math.floor(Math.random() * config.prideEmotes.length);
+        emoteString += config.prideEmotes[randNum] + ' ';
+      }
+
+      return emoteString;
+    }
+  ),
+
+  quote: new TwitchCallbackCommand('quote',
+    () => config.quotes[Math.floor(Math.random() * config.quotes.length)]
+  ),
+
+  raiding: new TwitchCallbackCommand('raiding',
+    (messageObject) => {
+      let raidingMessage = '';
+
+      const argument = messageObject.content.split(' ')[1];
+
+      switch (argument) {
+        case 'cozy':
+          raidingMessage = 'Cozy Raid bexxteCozy bexxteCozy';
+          break;
+        case 'love':
+          raidingMessage = 'Bexxters Raid bexxteLove bexxteLove';
+          break;
+        case 'vibe':
+          raidingMessage = 'Bexxters Raid bexxteBop bexxteBop';
+          break;
+        case 'aggro':
+          raidingMessage = 'Bexxters Raid bexxteGun bexxteGun';
+          break;
+        default:
+          raidingMessage = 'The !raiding command can be followed by any of these: cozy, love, vibe, aggro';
+          break;
+      }
+
+      return raidingMessage;
+    },
+    {refsMessage:true, cooldown_ms:0, modOnly:true}
+  ),
+
+  schedule: new TwitchCallbackCommand('schedule', 
+    () => {
+      const days = ['SUN', 'MON', 'TUES', 'WEDS', 'THURS', 'FRI', 'SAT'];
+      let responseString = '';
+      let first = true;
+
+      for (const day of days) {
+        if (config.schedule[day]) {
+          if (!first) {
+            responseString += ' | '
+          }
+          responseString += day;
+          responseString += ': ';
+          responseString += config.schedule[day];
+          first = false;
+        }
+      }
+
+      return responseString;
+    }
+  ),
+
+  validate: new TwitchCallbackCommand('validate',
+    (messageObject) => {
+      const getRandomValidationIndex = () => {
+        return Math.floor(Math.random() * config.validations.length);
+      }
+      let v1, v2, v3;
+
+      v1 = getRandomValidationIndex();
+
+      while (!v2 || v2 === v1) {
+        v2 = getRandomValidationIndex();
+      }
+
+      while (!v3 || v3 === v1 || v3 === v2) {
+        v3 = getRandomValidationIndex();
+      }
+
+      // she gives you three validation phrases
+      return `@${messageObject.tags['display-name']}
+          ${config.validations[v1]}
+          ${config.validations[v2]}
+          ${config.validations[v3]}`;
+    },
+    {refsMessage:true, cooldown_ms:5000}
+  ),
+
+  // ASYNC CALLBACK COMMANDS
+
+  so: new AsyncTwitchCallbackCommand('so',
+    async messageObject => {
+      let recipient = messageObject.content.split(' ')[1];
+      let output;
+
+        if (!recipient) {
+          return;
+        }
+      
+        while (recipient.startsWith('@')) {
+          recipient = recipient.slice(1);
+        }
+      
+        if (recipient === messageObject.channel.slice(1)) {
+          output = `@${recipient} is pretty cool, but she doesn't need a shoutout on her own channel.`;
+          return output;
+        }
+      
+        if (recipient === messageObject.tags.username) {
+          output = `Nice try @${recipient}, you can't give yourself a shoutout!`;
+          return output;
+        }
+      
+        let streamerData = await new Streamer(recipient).getCurrentStreamerData();
+      
+        let shoutout = '';
+      
+        if (!streamerData.game_name) {
+          shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! bexxteLove`;
+        } else if (streamerData.is_live) {
+          if (streamerData.game_name === 'Just Chatting') {
+            shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They are currently "${streamerData.game_name}" bexxteLove`;
+          } else {
+            shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They are currently playing "${streamerData.game_name}" bexxteLove`;
+          }
+          // or offline
+        } else {
+          if (streamerData.game_name === 'Just Chatting') {
+            shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They were last seen "${streamerData.game_name}" bexxteLove`;
+          } else {
+            shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They were last seen playing "${streamerData.game_name}" bexxteLove`;
+          }
+        }
+      
+        return shoutout;
+    },
+    {refsMessage:true, modOnly:true, cooldown_ms:0}
+  ),
+
+  uptime: new AsyncTwitchCallbackCommand('uptime', 
+    async messageObject => {
+      const streamerData = await new Streamer(messageObject.channel).getCurrentStreamerData();
+
+      // handle this?
+      if (!streamerData) {
+        return;
+      }
+
+      let uptimeOutput = '';
+
+      if (!streamerData.is_live) {
+        uptimeOutput = `Sorry, doesn't look like ${streamerData.display_name} is live right now. Check back again later!`;
+      } else {
+
+        const currentTime = Date.now();
+        const startTime = Date.parse(streamerData.started_at);
+        let elapsedTime = currentTime - startTime;
+
+        const hours = Math.floor(elapsedTime / (60000 * 60));
+        elapsedTime = elapsedTime % (60000 * 60);
+
+        const minutes = Math.floor(elapsedTime / 60000);
+        elapsedTime = elapsedTime % 60000;
+
+        const seconds = Math.floor(elapsedTime / 1000);
+
+        uptimeOutput += streamerData.display_name;
+        uptimeOutput += ' has been live for ';
+
+        if (hours > 1) {
+          uptimeOutput += hours + ' hours, ';
+        } else if (hours === 1) {
+          uptimeOutput += hours + ' hour, ';
+        }
+
+        if (minutes !== 1) {
+          uptimeOutput += minutes + ' minutes';
+        } else {
+          uptimeOutput += minutes + ' minute';
+        }
+
+        if (hours) {
+          uptimeOutput += ','
+        }
+
+        if (minutes !== 1) {
+          uptimeOutput += ' and ' + seconds + ' seconds.';
+        } else {
+          uptimeOutput += ' and ' + seconds + ' second.';
+        }
+
+      }
+
+      return uptimeOutput;
+    },
+    {refsMessage:true}
+  ),
+
+  // POSTERITY COMMANDS
+
+  // goals: new TwitchCommand('goals', "I'm hoping to hit 500 followers by the end of the year! So if you're enjoying what you see, feel free to hit the heart to help me get there! bexxteLove"),
+
+  // nqny: new TwitchCommand('nqny', "December 30th is Not Quite New Years: Round 2! Starting at 2PM eastern I'll be streaming for twelve hours as a celebration for this past year of streams and party with chat! We'll follow up from last year's stream with Spyro 2, a Fishing Minigame tier list, Alien Isolation Nightmare mode, Steam Giftcard Giveaways, and more!"),
+
+  // donate: new TwitchCommand('donate', "For $5 you get a random doodle, at $15 you get to choose what I draw for you (sfw). You can only get 2 drawings per donation. I'll do these in a bad art stream near the end of the month. If you'd like to donate to support the National Children's Alliance and their campaign against child abuse, click here: https://donate.tiltify.com/@bexxters/itsyourbusiness Thank you for your generosity!"),
+
+  // nca: new TwitchCommand('nca', "Child abuse thrives when good people decide its none of their business. Throughout the month of April, we will be raising funds for The National Children's Alliance. The NCA maintains thousands of Child Advocacy Centers - safe havens for children to grow, recover, and achieve justice. Find out more about how the NCA helps children here: https://www.nationalchildrensalliance.org"),
+
+  // ms: new TwitchCommand('ms', "Multiple Sclerosis is a disease that impacts the nervous system. It causes the immune system to damage myelin, the coating of our nerve fibers. This causes an array symptoms such as numbness, tingling, mood changes, memory problems, pain, fatigue, or in extreme cases - blindness and/or paralysis. There is currently no known cause or cure."),
 
 };
 

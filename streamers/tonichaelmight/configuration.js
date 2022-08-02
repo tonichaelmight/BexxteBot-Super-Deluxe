@@ -5,13 +5,13 @@ const config = {
   botName: 'bexxtebot',
 
   schedule: {
-    sunday: "Zelle",
-    monday: "Stray",
-    tuesday: "Tales of Symphonia",
-    wednesday: "Yakuza 5",
-    thursday: "No Stream",
-    friday: "",
-    saturday: ""
+    SUN: "Zelle",
+    MON: "Stray",
+    TUES: "Tales of Symphonia",
+    WEDS: "Yakuza 5",
+    THURS: "No Stream",
+    FRE: "",
+    SAT: ""
   },
 
   playlist: 'https://www.youtube.com/watch?v=-9gEgshJUuY',
