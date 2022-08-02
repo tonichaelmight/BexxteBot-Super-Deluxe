@@ -1,12 +1,24 @@
 const ev = require('./ev.js');
 const https = require('https');
 const { logError } = require('./utils.js');
+const fileName = require('path').basename(__filename);
 
 class Streamer {
+
+  addCommandAliases(commands) {
+    for (const command in commands) {
+      if (commands[command].options.aliases) {
+        commands[command].options.aliases.forEach(alias => {
+          commands[alias] = commands[command];
+        })
+      }
+    }
+  }
 
   constructor(username, commands, config) {
     this.username = username.startsWith('#') ? username.slice(1) : username;
     this.commands = commands;
+    this.addCommandAliases(this.commands);
     //console.log(commands);
     this.config = config;
   }
@@ -51,7 +63,7 @@ class Streamer {
 
         } catch (e) {
           if (!(e.name === 'SyntaxError' && e.message === 'Unexpected end of JSON input')) {
-            logError(e, 'Streamer.js');
+            logError(e, fileName);
           }
         }
 

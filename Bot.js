@@ -1,5 +1,6 @@
 const twitch = require('tmi.js'); // twitch tingz
 const { logError } = require('./utils.js');
+const fileName = require('path').basename(__filename);
 
 const { TwitchMessage } = require('./TwitchMessage.js');
 const { twitchCommands } = require('./TwitchCommand.js');
@@ -44,16 +45,16 @@ class Bot {
     this.twitchClient.on('message', async (channel, tags, message, self) => {
       const twitchMessage = new TwitchMessage(channel, tags, message, self);
 
-      //console.log(twitchMessage);
-
-      await this.processTwitchMessage(twitchMessage); // THIS NEEDS TO GO BACK IN TRY
+      //console.log(twitchMessage); 
       
       try {
+
+        await this.processTwitchMessage(twitchMessage);
 
       // there are no errors expected here, so if something does happen it gets logged in error.txt and we keep the program running (otherwise bexxteBot stops :/ )
       } catch(error) {
         
-        logError(error, 'Bot.js');
+        logError(error, fileName);
         
       }
       
@@ -156,10 +157,11 @@ class Bot {
     //console.log(twitchMessage);
 
     if (twitchMessage.response) {
-      this.speakInTwitch(twitchMessage); // PUT BACK IN TRY
       try {
+        this.speakInTwitch(twitchMessage);
       } catch(e) {
-        logError('Probably attempted to say an undefined message', 'Bot.js')
+        logError('Probably attempted to say an undefined message', fileName);
+        logError(e, fileName);
       }
       return;
     }

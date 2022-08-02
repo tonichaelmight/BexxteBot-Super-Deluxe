@@ -1,8 +1,10 @@
 // if you're trying to make a new command, this is the right page; scroll down a bit further
 const { logError } = require('./utils.js');
+const fileName = require('path').basename(__filename);
 
 const twitchCommands = {};
 
+// Basic commands will yield the same output every time they are executed -- foundation for more specialized command types
 class TwitchCommand {
 
   constructor(name, commandText, options={}) {
@@ -12,7 +14,14 @@ class TwitchCommand {
     this.options = {};
     this.options.cooldown_ms = options.cooldown_ms !== undefined ? options.cooldown_ms : 10000;
     this.options.modOnly = options.modOnly || false;
-    this.options.refsMessage = options.refsMessage || false;
+    
+    if (options.aliases) {
+      if (Array.isArray(options.aliases)) {
+        this.options.aliases = options.aliases;
+      } else {
+        this.options.aliases = [options.aliases];
+      }
+    }
 
     this.onCooldown = false;
   }
@@ -24,7 +33,7 @@ class TwitchCommand {
     }, this.options.cooldown_ms);
   }
 
-  async execute(messageObject) {
+  execute(messageObject) {
     //console.log(messageObject);
     if (!messageObject.tags.mod && !(messageObject.tags.username === messageObject.channel.slice(1))) {
       if (this.options.modOnly || this.onCooldown) {
@@ -37,16 +46,56 @@ class TwitchCommand {
     }
 
     try {
-      if (typeof this.commandText === typeof function(){}) {
-        messageObject.addResponse(this.commandText(messageObject));
-      } else {
-        messageObject.addResponse(this.commandText);
-      }
+      messageObject.addResponse(this.commandText);
     } catch (e) {
-      logError(`Problem executing the ${this.name} command`, 'TwitchCommand.js');
-      logError(e, 'TwitchCommand.js');
+      logError(`Problem executing the ${this.name} command`, fileName);
+      logError(e, fileName);
     }
   }
+}
+
+
+class TwitchCallbackCommand extends TwitchCommand {
+
+  constructor(name, callback, options={}) {
+    super(name);
+    this.callback = callback;
+
+    this.options = {};
+    this.options.cooldown_ms = options.cooldown_ms !== undefined ? options.cooldown_ms : 10000;
+    this.options.modOnly = options.modOnly || false;
+    this.options.refsMessage = options.refsMessage || false;
+    
+    if (options.aliases) {
+      if (Array.isArray(options.aliases)) {
+        this.options.aliases = options.aliases;
+      } else {
+        this.options.aliases = [options.aliases];
+      }
+    }
+
+    this.onCooldown = false;
+  }
+
+  execute(messageObject) {if (!messageObject.tags.mod && !(messageObject.tags.username === messageObject.channel.slice(1))) {
+      if (this.options.modOnly || this.onCooldown) {
+        return;
+      }
+    }
+
+    if (this.options.cooldown_ms) {
+      this.createCooldown();
+    }
+
+    try {
+      this.options.refsMessage ? messageObject.addResponse(this.callback(messageObject)) : messageObject.addResponse(this.callback());
+    } catch (e) {
+      logError(`Problem executing the ${this.name} command`, fileName);
+      logError(e, fileName);
+    }
+
+  }
+
 }
 
 /* basic TwitchCommand creation template
@@ -160,13 +209,13 @@ class TwitchCounterCommand extends TwitchCommand {
       await this.callback(messageObject, evaluation);
       return;
     } catch (e) {
-      logError(`Problem executing the ${this.name} command`, 'TwitchCommand.js');
-      logError(e, 'TwitchCommand.js');
+      logError(`Problem executing the ${this.name} command`, fileName);
+      logError(e, fileName);
     }
   }
 }
 
-module.exports = { TwitchCommand, TwitchCounterCommand };
+module.exports = { TwitchCommand, TwitchCallbackCommand, TwitchCounterCommand };
 
 const test = new TwitchCounterCommand('test', testCallback);
 async function testCallback(messageObject, evaluation) {
@@ -291,20 +340,6 @@ async function bopCallback(messageObject, evaluation) {
 //
 
 
-
-// const music = new TwitchCommand('music', musicCallback);
-// function musicCallback(messageObject) {
-//   if (bexxteConfig.playlist) {
-//     messageObject.addResponse(
-//       `Today's playlist is ${bexxteConfig.playlist}`
-//     );
-//   } else {
-//     messageObject.addResponse(
-//       'this bitch empty, yeet'
-//     )
-//   }
-// }
-
 // // shoutout
 // const so = new TwitchCommand('so', soCallback, 0, true);
 // async function soCallback(messageObject) {
@@ -415,56 +450,12 @@ async function bopCallback(messageObject, evaluation) {
 
 // } // end uptimeCallback
 
-// const );
-// function whomstCallback(messageObject) {
-//   messageObject.addResponse(
-//     
-//   )
-// }
-
-
 // //
 // // SPECIAL COMMANDS
 // //
 
 
 
-// // content warning
-// const cw = new TwitchCommand('cw', cwCallback);
-// function cwCallback(messageObject) {
-//   const result =
-//     bexxteConfig.contentWarning ||
-//     'The streamer has not designated any content warnings for this game.';
-
-//   messageObject.addResponse(
-//     result
-//   )
-// }
-
-// const mute = new TwitchCommand('mute', muteCallback);
-// const muted = new TwitchCommand('muted', muteCallback);
-// function muteCallback(messageObject) {
-//   messageObject.addResponse(
-//     `@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
-//   );
-//   messageObject.addResponse(
-//     `@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
-//   );
-//   messageObject.addResponse(
-//     `@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`
-//   );
-// }
-
-// const pitbull = new TwitchCommand('pitbull', pitbullCallback);
-// function pitbullCallback(messageObject) {
-//   const coinflip = Math.floor(Math.random() * 2);
-
-//   if (coinflip === 0) {
-//     messageObject.addResponse('Dale!');
-//   } else {
-//     messageObject.addResponse('Believe me, been there done that. But everyday above ground is a great day, remember that.');
-//   }
-// }
 
 // const pride = new TwitchCommand('pride', prideCallback);
 // function prideCallback(messageObject) {
@@ -545,13 +536,6 @@ async function bopCallback(messageObject, evaluation) {
 //   );
 // }
 
-// const ;
-// function youtubeCallback(messageObject) {
-//   messageObject.addResponse(
-//     
-//   )
-// }
-
 // const getRandomValidation = () => {
 //   return Math.floor(Math.random() * bexxteConfig.validations.length);
 // }
@@ -578,6 +562,9 @@ async function bopCallback(messageObject, evaluation) {
 //   );
 // }
 
+// //
+// // PEOPLE
+// //
 
 // const michael = new TwitchCommand('michael', michaelCallback, 5000);
 // const michaelQuotes = bexxteConfig.michaelQuotes;
@@ -588,6 +575,5 @@ async function bopCallback(messageObject, evaluation) {
 //     `Humor King tonichaelmight aka my best friend for over half my life??? we're old. As he once said: "${michaelQuotes[i]}"`
 //   )
 // }
-
 
 // module.exports = { twitchCommands };

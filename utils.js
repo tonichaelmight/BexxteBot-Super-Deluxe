@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 const logError = (errorMessage, fileName) => {
   try {

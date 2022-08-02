@@ -1,5 +1,5 @@
 const { logError } = require('../../utils.js');
-const { TwitchCommand, TwitchTimerCommand } = require('../../TwitchCommand.js');
+const { TwitchCommand, TwitchCallbackCommand, TwitchTimerCommand } = require('../../TwitchCommand.js');
 const { Streamer } = require('../../Streamer.js');
 const { config } = require('./configuration.js');
 
@@ -51,7 +51,25 @@ const commands = {
 
   yackie: new TwitchCommand('yackie', 'Check out one of my bestest buds and overall cool gal Jackie at twitch.tv/broocat!', {cooldown_ms:5000}),
 
-};
+  // CALLBACK COMMANDS
 
+  cw: new TwitchCallbackCommand('cw',
+    () => config.contentWarning || 'The streamer has not designated any content warnings for this game.'
+  ),
+
+  music: new TwitchCallbackCommand('music',
+    () => config.playlist ? `Today's playlist is ${config.playlist}` : 'this bitch empty, yeet'
+  ),
+
+  mute: new TwitchCallbackCommand('mute',
+    messageObject => [`@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`, `@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`, `@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`],
+    {refsMessage:true, aliases:['muted']}
+  ),
+
+  pitbull: new TwitchCallbackCommand('pitbull',
+    () => Math.floor(Math.random() * 2) === 0 ? 'Dale!' : 'Believe me, been there done that. But everyday above ground is a great day, remember that.'
+  ),
+
+};
 
 module.exports = { commands };
