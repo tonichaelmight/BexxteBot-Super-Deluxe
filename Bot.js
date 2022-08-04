@@ -17,8 +17,9 @@ class Bot {
 
     this.channels.forEach(channel => {
       const { commands } = require(`./streamers/${channel}/commands.js`);
+      const { timers } = require(`./streamers/${channel}/timers.js`);
       const { config } = require(`./streamers/${channel}/configuration.js`);
-      this.streamers[channel] = new Streamer(channel, commands, config);
+      this.streamers[channel] = new Streamer(channel, commands, timers, config, this);
     });
   }
 
@@ -165,6 +166,14 @@ class Bot {
       }
       return;
     }
+  }
+
+  startTimers() {
+    this.streamers.forEach(streamer => {
+      streamer.timers.forEach(timer => {
+        timer.start();
+      })
+    })
   }
 
   // sets up the twitch command timer

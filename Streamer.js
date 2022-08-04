@@ -15,12 +15,17 @@ class Streamer {
     }
   }
 
-  constructor(username, commands, config) {
+  constructor(username, commands, timers, config, bot) {
     this.username = username.startsWith('#') ? username.slice(1) : username;
     this.commands = commands;
     this.addCommandAliases(this.commands);
+    this.timers = timers;
+    this.timers.forEach(timer => {
+      timer.streamer = this;
+    })
     //console.log(commands);
     this.config = config;
+    this.bot = bot;
   }
 
   async getCurrentStreamerData() {
