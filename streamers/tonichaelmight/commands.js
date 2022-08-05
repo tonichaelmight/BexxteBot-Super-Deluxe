@@ -1,7 +1,9 @@
 const { logError } = require('../../utils.js');
-const { TwitchCommand, TwitchCallbackCommand, AsyncTwitchCallbackCommand, TwitchTimerCommand } = require('../../TwitchCommand.js');
+const { TwitchCommand, TwitchCallbackCommand, AsyncTwitchCallbackCommand, TwitchCounterCommand } = require('../../TwitchCommand.js');
 const { Streamer } = require('../../Streamer.js');
 const { config } = require('./configuration.js');
+const fileName = require('path').basename(__filename);
+
 
 const Database = require("@replit/database");
 const db = new Database();
@@ -198,9 +200,16 @@ const commands = {
           output = `Nice try @${recipient}, you can't give yourself a shoutout!`;
           return output;
         }
-      
-        let streamerData = await new Streamer(recipient).getCurrentStreamerData();
-      
+
+        let streamerData;
+
+        try {
+          streamerData = await Streamer.getCurrentStreamerData(recipient);
+        } catch(e) {
+          logError('Error occurred while retrieving streamer data in the shoutout command', fileName);
+          logError(e, fileName);
+        }
+
         let shoutout = '';
       
         if (!streamerData.game_name) {
@@ -226,12 +235,13 @@ const commands = {
   ),
 
   uptime: new AsyncTwitchCallbackCommand('uptime', 
-    async messageObject => {
-      const streamerData = await new Streamer(messageObject.channel).getCurrentStreamerData();
-
-      // handle this?
-      if (!streamerData) {
-        return;
+    async () => {
+      let streamerData;
+      try {
+        streamerData = await Streamer.getCurrentStreamerData(config.channelName);
+      } catch(e) {
+        logError('Error occurred while retrieving streamer data in the uptime command', fileName);
+        logError(e, fileName);
       }
 
       let uptimeOutput = '';
@@ -280,8 +290,7 @@ const commands = {
       }
 
       return uptimeOutput;
-    },
-    {refsMessage:true}
+    }
   ),
 
   // POSTERITY COMMANDS

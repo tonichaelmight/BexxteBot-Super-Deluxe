@@ -27,9 +27,9 @@ class TwitchMessage {
     }
   }
 
-  static generateDummyMessage(messageText='') {
+  static generateDummyMessage(channel, messageText='') {
     return new TwitchMessage(
-      ev.CHANNEL_NAME,
+      channel,
       { mod: true, username: '' },
       messageText,
       false

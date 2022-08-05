@@ -22,18 +22,17 @@ class Streamer {
     this.timers = timers;
     this.timers.forEach(timer => {
       timer.streamer = this;
-    })
-    //console.log(commands);
+    });
+    console.log(commands);
     this.config = config;
     this.bot = bot;
   }
 
-  async getCurrentStreamerData() {
-
+  static async getCurrentStreamerData(streamer) {
     const channelRequestOptions = {
       hostname: 'api.twitch.tv',
       method: 'GET',
-      path: `/helix/search/channels?query=${this.username}`,
+      path: `/helix/search/channels?query=${streamer}`,
       headers: {
         'Authorization': `Bearer ${ev.BEXXTEBOT_TOKEN}`,
         'Client-id': ev.CLIENT_ID
@@ -54,7 +53,7 @@ class Streamer {
 
           let channelData;
           for (const channelObject of requestResult.data) {
-            if (channelObject.broadcaster_login === this.username) {
+            if (channelObject.broadcaster_login === streamer) {
               channelData = channelObject;
               break;
             }
@@ -84,17 +83,22 @@ class Streamer {
 
     let cycles = 0;
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       const resolutionTimeout = setInterval(() => {
-        if (streamerData || cycles > 20) {
+        if (streamerData) {
           //console.log(streamerData);
           resolve(streamerData);
           clearInterval(resolutionTimeout);
+        } else if (cycles > 20) {
+          reject('no streamer data found');
         }
         cycles++;
       }, 250)
     })
+  }
 
+  async getCurrentStreamerData(streamer=this.username) {
+    return await Streamer.getCurrentStreamerData(streamer);
   }
 
 }

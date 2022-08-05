@@ -18,6 +18,7 @@ class Bot {
     this.channels.forEach(channel => {
       const { commands } = require(`./streamers/${channel}/commands.js`);
       const { timers } = require(`./streamers/${channel}/timers.js`);
+      //console.log(timers);
       const { config } = require(`./streamers/${channel}/configuration.js`);
       this.streamers[channel] = new Streamer(channel, commands, timers, config, this);
     });
@@ -47,14 +48,15 @@ class Bot {
       const twitchMessage = new TwitchMessage(channel, tags, message, self);
 
       //console.log(twitchMessage); 
-      
-      try {
 
         await this.processTwitchMessage(twitchMessage);
+      
+      try {
 
       // there are no errors expected here, so if something does happen it gets logged in error.txt and we keep the program running (otherwise bexxteBot stops :/ )
       } catch(error) {
         
+        logError(`Error encountered while processing a Twitch Message in ${channel}`, fileName);
         logError(error, fileName);
         
       }
@@ -169,50 +171,18 @@ class Bot {
   }
 
   startTimers() {
-    this.streamers.forEach(streamer => {
-      streamer.timers.forEach(timer => {
+    //console.log(this.streamers);
+    for (const streamer in this.streamers) {
+      this.streamers[streamer].timers.forEach(timer => {
         timer.start();
       })
-    })
+    }
   }
 
-  // sets up the twitch command timer
-  async activateTwitchTimer() {
-    let command = '';
-
-    while (true) {
-      
-      command = await twitchTimer.getTimerOutput();
-
-      if (!command) {
-        continue;
-      }
-
-      // passes a dummy message through the system to get bexxteBot to respond to it.
-      const dummyMessage = TwitchMessage.generateDummyMessage(`!${command}`);
-
-      await this.processTwitchMessage(dummyMessage);
-
-    }
-
-  }
-
-  async activateDwarvenVowTimer() {
-
-    while (true) {
-
-      const vow = await dwarvenVowTimer.getTimerOutput();
-
-      if (!vow) continue;
-
-      const dummyMessage = TwitchMessage.generateDummyMessage();
-
-      dummyMessage.addResponse(vow);
-
-      this.speakInTwitch(dummyMessage);
-      
-    }
-    
+  run() {
+    this.establishTwitchClient();
+    //this.establishDiscordClient();
+    this.startTimers();
   }
 
   // estabishes a client that can send and receive messages from Discord

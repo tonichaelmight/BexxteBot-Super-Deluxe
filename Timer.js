@@ -1,8 +1,5 @@
-const { Streamer } = require('./Streamer.js');
 const { bexxteConfig } = require('./streamers/bexxters/configuration.js');
 const { TwitchMessage } = require('./TwitchMessage.js');
-
-const bexxters = new Streamer('bexxters');
 
 // TIMER CLASS
 class Timer {
@@ -19,7 +16,12 @@ class Timer {
   }
 
   getRandomIndex() {
-    return Math.floor(Math.random() * this.commands.length);
+    if (this.options.commands) {
+      return Math.floor(Math.random() * this.options.commands.length);
+    } else if (this.options.outputs) {
+      return Math.floor(Math.random() * this.options.outputs.length)
+    }
+    
   }
 
   async getTimerOutput() {
@@ -27,10 +29,9 @@ class Timer {
     return new Promise(resolve => {
       setTimeout(async () => {
 
-        let result;
-        const bexxtersData = await bexxters.getCurrentStreamerData();
-        const live = bexxtersData.is_live;
-        const currentGame = this.options.gameTitle ? bexxtersData.game_name : undefined;
+        const streamerData = await this.streamer.getCurrentStreamerData();
+        const live = streamerData.is_live;
+        const currentGame = this.options.gameTitle ? streamerData.game_name : undefined;
 
         let dummyMessage;
 
@@ -41,10 +42,10 @@ class Timer {
           }
 
           if (this.options.commands) {
-            dummyMessage = TwitchMessage.generateDummyMessage(`!${this.options.commands[i]}`);
+            dummyMessage = TwitchMessage.generateDummyMessage(`#${this.streamer.username}`, `!${this.options.commands[i]}`);
             await this.streamer.bot.processTwitchMessage(dummyMessage)
           } else if (this.options.outputs) {
-            dummyMessage = TwitchMessage.generateDummyMessage();
+            dummyMessage = TwitchMessage.generateDummyMessage(`#${this.streamer.username}`);
             dummyMessage.addResponse(this.options.outputs[i]);
             this.streamer.bot.speakInTwitch(dummyMessage);
           } else {
@@ -68,12 +69,11 @@ class Timer {
     }); 
   }
 
-  start() {
-
+  async start() {
+    while(true) {
+      await this.getTimerOutput();
+    }
   }
 }
 
-const twitchTimer = new Timer(bexxteConfig.timerCommands, 720000, 1380000); // 12 - 35 minutes (range 23)
-const dwarvenVowTimer = new Timer(bexxteConfig.dwarvenVows, 1800000, 900000, 'Tales of Symphonia'); // 30 - 45 minutes (range 15)
-
-module.exports = { twitchTimer, dwarvenVowTimer };
+module.exports = { Timer };

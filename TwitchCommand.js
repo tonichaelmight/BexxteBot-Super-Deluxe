@@ -75,10 +75,14 @@ class TwitchCallbackCommand extends TwitchCommand {
     }
 
     try {
+
       this.options.refsMessage ? messageObject.addResponse(this.callback(messageObject)) : messageObject.addResponse(this.callback());
+      
     } catch (e) {
+
       logError(`Problem executing the ${this.name} command`, fileName);
       logError(e, fileName);
+
     }
 
   }
@@ -104,10 +108,14 @@ class AsyncTwitchCallbackCommand extends TwitchCallbackCommand {
     }
 
     try {
+
       this.options.refsMessage ? messageObject.addResponse(await this.callback(messageObject)) : messageObject.addResponse(await this.callback());
+
     } catch (e) {
+
       logError(`Problem executing the ${this.name} command`, fileName);
       logError(e, fileName);
+
     }
 
   }
