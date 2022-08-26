@@ -290,22 +290,9 @@ async function bopCallback(messageObject, evaluation) {
 const bttv = new TwitchCommand('bttv', bttvCallback);
 function bttvCallback(messageObject) {
   messageObject.addResponse(
-    `Install bttv here (https://betterttv.com/) to use these cool emotes: 
+    `Can't see emotes in this message? Install bttv here (https://betterttv.com/) to use these cool emotes and more!
         blobDance 
-        monkaTOS 
-        catblobDance 
-        hypeE 
-        think3D 
-        HYPERS  
-        elmoFire 
-        WEEWOO 
-        WELCOME 
-        nutButton 
-        ChefsKiss 
-        KEKW 
-        OhMyPoggies 
-        peepoRiot
-        HoldIt`
+        catblobDance`
   )
 }
 
@@ -642,6 +629,13 @@ const youtube = new TwitchCommand('youtube', youtubeCallback);
 function youtubeCallback(messageObject) {
   messageObject.addResponse(
     `Check out edited short plays and full stream uploads over on my Youtube: ${bexxteConfig.socials.youtube}`
+  )
+}
+
+const newvid = new TwitchCommand('newvid', newvidCallback);
+function newvidCallback(messageObject) {
+  messageObject.addResponse(
+    `Check out the most recent upload! ${bexxteConfig.newvideo}`
   )
 }
 

@@ -1,20 +1,22 @@
 exports.bexxteConfig = {
 
   schedule: {
-    sunday: "Zelle",
-    monday: "Stray",
-    tuesday: "Tales of Symphonia",
+    sunday: "",
+    monday: "Cult of The Lamb",
+    tuesday: "DBD",
     wednesday: "Yakuza 5",
-    thursday: "No Stream",
+    thursday: "Cult of The Lamb/Tales w/Michael",
     friday: "",
     saturday: ""
   },
 
-  playlist: 'https://www.youtube.com/watch?v=-9gEgshJUuY',
+  playlist: 'https://www.youtube.com/watch?v=l_W3OM6E4OM',
 
-  contentWarning: '',
+  contentWarning: 'sheep sacrifice, cult stuff',
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
+
+  newvideo: "https://youtu.be/QjjsqwHsvXo",
 
   timerCommands: [
     'discord',
@@ -25,7 +27,7 @@ exports.bexxteConfig = {
     'bttv',
     'schedule',
     'pride',
-    'youtube', 
+    'newvid', 
   ],
 
   quotes: [
@@ -106,7 +108,7 @@ exports.bexxteConfig = {
 
   socials: {
     twitter: 'https://twitter.com/Bexterkins',
-    tiktok: 'https://vm.tiktok.com/ZMeWAw77Q/',
+    tiktok: 'https://www.tiktok.com/@bexxtersttv',
     youtube: 'https://www.youtube.com/channel/UCERe51LWgXJF48btFjyR1Kg'
   }
 
