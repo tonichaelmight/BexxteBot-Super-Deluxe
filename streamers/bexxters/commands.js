@@ -17,7 +17,7 @@ const commands = {
 
   blm: new TwitchCommand('blm', 'Black Lives Matter. Follow this link to learn about ways you can support the movement: https://blacklivesmatters.carrd.co'),
 
-  bttv: new TwitchCommand('bttv', 'Install bttv here (https://betterttv.com/) to use these cool emotes: blobDance monkaTOS catblobDance hypeE think3D HYPERS elmoFire WEEWOO WELCOME nutButton ChefsKiss KEKW OhMyPoggies peepoRiot HoldIt'),
+  bttv: new TwitchCommand('bttv', 'Install bttv here (https://betterttv.com/) to use these cool emotes: blobDance catblobDance'),
 
   discord: new TwitchCommand('discord', `Join the Basement Party and hang out offline here: ${bexxteConfig.discordServerLink}`),
 
