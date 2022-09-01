@@ -16,9 +16,9 @@ exports.bexxteConfig = {
 
   playlist: 'https://www.youtube.com/watch?v=yk5o_UuZGOI',
 
-  contentWarning: 'bad teammates',
-
   newvideo: "https://youtu.be/QjjsqwHsvXo",
+
+  contentWarning: 'bad teammates',
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
 
