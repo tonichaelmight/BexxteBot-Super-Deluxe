@@ -1,18 +1,18 @@
 exports.bexxteConfig = {
 
   schedule: {
-    sunday: "",
-    monday: "Cult of The Lamb",
-    tuesday: "DBD",
+    sunday: "Cult of the Lamb",
+    monday: "Gardens Between",
+    tuesday: "DBD: Resident Evil",
     wednesday: "Yakuza 5",
     thursday: "Cult of The Lamb/Tales w/Michael",
     friday: "",
     saturday: ""
   },
 
-  playlist: 'https://www.youtube.com/watch?v=l_W3OM6E4OM',
+  playlist: 'https://www.youtube.com/watch?v=yk5o_UuZGOI',
 
-  contentWarning: 'sheep sacrifice, cult stuff',
+  contentWarning: 'bad teammates',
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
 
