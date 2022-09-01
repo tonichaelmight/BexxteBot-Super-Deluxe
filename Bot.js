@@ -48,12 +48,13 @@ class Bot {
       const twitchMessage = new TwitchMessage(channel, tags, message, self);
 
       //console.log(twitchMessage); 
-
-        await this.processTwitchMessage(twitchMessage);
       
       try {
 
       // there are no errors expected here, so if something does happen it gets logged in error.txt and we keep the program running (otherwise bexxteBot stops :/ )
+        
+        await this.processTwitchMessage(twitchMessage);
+        
       } catch(error) {
         
         logError(`Error encountered while processing a Twitch Message in ${channel}`, fileName);

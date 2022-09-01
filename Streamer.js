@@ -14,7 +14,7 @@ class Streamer {
     this.timers.forEach(timer => {
       timer.streamer = this;
     });
-    console.log(commands);
+    //console.log(commands);
     this.config = config;
     this.bot = bot;
   }
@@ -59,7 +59,7 @@ class Streamer {
         try {
 
           requestResult = JSON.parse(requestResult);
-          console.log(requestResult);
+          //console.log(requestResult);
 
           let channelData;
           for (const channelObject of requestResult.data) {
