@@ -16,8 +16,6 @@ exports.bexxteConfig = {
 
   playlist: 'https://www.youtube.com/watch?v=yk5o_UuZGOI',
 
-  newvideo: "https://youtu.be/QjjsqwHsvXo",
-
   contentWarning: 'bad teammates',
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
@@ -113,7 +111,7 @@ exports.bexxteConfig = {
 
   socials: {
     twitter: 'https://twitter.com/Bexterkins',
-    tiktok: 'https://www.tiktok.com/@bexxtersttv',
+    tiktok: 'https://vm.tiktok.com/ZMeWAw77Q/',
     youtube: 'https://www.youtube.com/channel/UCERe51LWgXJF48btFjyR1Kg'
   }
 

@@ -85,7 +85,6 @@ class TwitchCallbackCommand extends TwitchCommand {
       logError(e, fileName);
 
     }
-
   }
 
 }
