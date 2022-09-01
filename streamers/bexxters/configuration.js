@@ -1,5 +1,9 @@
 exports.bexxteConfig = {
 
+  channelName: 'bexxters',
+
+  botName: 'bexxtebot',
+
   schedule: {
     sunday: "Cult of the Lamb",
     monday: "Gardens Between",
@@ -16,8 +20,6 @@ exports.bexxteConfig = {
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
 
-  newvideo: "https://youtu.be/QjjsqwHsvXo",
-
   timerCommands: [
     'discord',
     'prime',
@@ -27,6 +29,7 @@ exports.bexxteConfig = {
     'bttv',
     'schedule',
     'pride',
+    'youtube', 
     'newvid', 
   ],
 
@@ -99,16 +102,16 @@ exports.bexxteConfig = {
   ],
 
   dwarvenVows: [
-    'Dwarven Vow #1: Let’s all work together for a more peaceful world.',
+    'Dwarven Vow #1: Let\'s all work together for a more peaceful world.',
     'Dwarven Vow #2: Never abandon someone in need.',
-    'Dwarven Vow #4: Don’t depend on others. Walk on your own two legs.',
+    'Dwarven Vow #4: Don\'t depend on others. Walk on your own two legs.',
     'Dwarven Vow #7: Goodness and love will always win.',
     'Dwarven Vow #11: Lying is the first step down the path of thievery.'
   ],
 
   socials: {
     twitter: 'https://twitter.com/Bexterkins',
-    tiktok: 'https://www.tiktok.com/@bexxtersttv',
+    tiktok: 'https://vm.tiktok.com/ZMeWAw77Q/',
     youtube: 'https://www.youtube.com/channel/UCERe51LWgXJF48btFjyR1Kg'
   }
 

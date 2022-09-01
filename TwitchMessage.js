@@ -14,16 +14,22 @@ class TwitchMessage {
   }
 
   addResponse(output, mean=false) {
+    if (!Array.isArray(output)) {
+      output = [output]
+    }
+    const result = output.map(line => {
+      return new TwitchResponse(line, mean);
+    })
     if (this.response) {
-      this.response.push(new TwitchResponse(output, mean));
+      this.response.push(...result);
     } else {
-      this.response = [new TwitchResponse(output, mean)];
+      this.response = result;
     }
   }
 
-  static generateDummyMessage(messageText='') {
+  static generateDummyMessage(channel, messageText='') {
     return new TwitchMessage(
-      ev.CHANNEL_NAME,
+      channel,
       { mod: true, username: '' },
       messageText,
       false

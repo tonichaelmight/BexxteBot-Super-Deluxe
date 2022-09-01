@@ -1,16 +1,27 @@
 const twitch = require('tmi.js'); // twitch tingz
 const { logError } = require('./utils.js');
+const fileName = require('path').basename(__filename);
 
 const { TwitchMessage } = require('./TwitchMessage.js');
 const { twitchCommands } = require('./TwitchCommand.js');
-const { bexxteConfig } = require('./configuration.js');
 const { twitchTimer, dwarvenVowTimer } = require('./Timer.js');
+const { Streamer } = require('./Streamer.js');
 
 class Bot {
   constructor(name, channels, token) {
     this.name = name;
     this.channels = channels;
     this.token = token;
+
+    this.streamers = {};
+
+    this.channels.forEach(channel => {
+      const { commands } = require(`./streamers/${channel}/commands.js`);
+      const { timers } = require(`./streamers/${channel}/timers.js`);
+      //console.log(timers);
+      const { config } = require(`./streamers/${channel}/configuration.js`);
+      this.streamers[channel] = new Streamer(channel, commands, timers, config, this);
+    });
   }
 
   // estabishes a client that can send and receive messages from Twitch
@@ -36,16 +47,17 @@ class Bot {
     this.twitchClient.on('message', async (channel, tags, message, self) => {
       const twitchMessage = new TwitchMessage(channel, tags, message, self);
 
-      //console.log(twitchMessage);
-      
-      try {
+      //console.log(twitchMessage); 
 
         await this.processTwitchMessage(twitchMessage);
+      
+      try {
 
       // there are no errors expected here, so if something does happen it gets logged in error.txt and we keep the program running (otherwise bexxteBot stops :/ )
       } catch(error) {
         
-        logError(error, 'bexxtebot.js');
+        logError(`Error encountered while processing a Twitch Message in ${channel}`, fileName);
+        logError(error, fileName);
         
       }
       
@@ -55,7 +67,7 @@ class Bot {
   // moderates twitch messages
   moderateTwitchMessage(twitchMessage) {
     if (twitchMessage.needsModeration()) {
-      bexxteConfig.forbidden.forEach(word => { 
+      this.streamers[twitchMessage.channel.slice(1)].config.forbidden.forEach(word => { 
         if (twitchMessage.content.includes(word)) {
           twitchMessage.addResponse(
             `Naughty naughty, @${twitchMessage.tags.username}! We don't use that word here!`,
@@ -89,8 +101,9 @@ class Bot {
   }
 
   async executeTwitchCommand(twitchMessage, command) {
-    if (twitchCommands[command]) {
-      await twitchCommands[command].execute(twitchMessage);
+    //console.log(this.streamers[twitchMessage.channel.slice(1)])
+    if (this.streamers[twitchMessage.channel.slice(1)].commands[command]) {
+      await this.streamers[twitchMessage.channel.slice(1)].commands[command].execute(twitchMessage);
     }
   }
 
@@ -101,7 +114,7 @@ class Bot {
       if (responseLine.mean) {
         this.twitchClient.timeout(
           twitchMessage.channel,
-          twitchMessage.username,
+          twitchMessage.tags.username,
           20,
           'used forbidden term'
         );
@@ -119,10 +132,10 @@ class Bot {
         );
         
       } else {
-        console.log('hi');
+        //console.log('hi');
         this.twitchClient.say(
           twitchMessage.channel,
-          responseLine.output
+          responseLine.output,
         );
       }
 
@@ -144,51 +157,32 @@ class Bot {
 
     await this.executeTwitchCommand(twitchMessage, command);
 
-    // console.log(twitchMessage);
+    //console.log(twitchMessage);
 
     if (twitchMessage.response) {
-      this.speakInTwitch(twitchMessage);
+      try {
+        this.speakInTwitch(twitchMessage);
+      } catch(e) {
+        logError('Probably attempted to say an undefined message', fileName);
+        logError(e, fileName);
+      }
       return;
     }
   }
 
-  // sets up the twitch command timer
-  async activateTwitchTimer() {
-    let command = '';
-
-    while (true) {
-      
-      command = await twitchTimer.getTimerOutput();
-
-      if (!command) {
-        continue;
-      }
-
-      // passes a dummy message through the system to get bexxteBot to respond to it.
-      const dummyMessage = TwitchMessage.generateDummyMessage(`!${command}`);
-
-      await this.processTwitchMessage(dummyMessage);
-
+  startTimers() {
+    //console.log(this.streamers);
+    for (const streamer in this.streamers) {
+      this.streamers[streamer].timers.forEach(timer => {
+        timer.start();
+      })
     }
-
   }
 
-  async activateDwarvenVowTimer() {
-
-    while (true) {
-
-      const vow = await dwarvenVowTimer.getTimerOutput();
-
-      if (!vow) continue;
-
-      const dummyMessage = TwitchMessage.generateDummyMessage();
-
-      dummyMessage.addResponse(vow);
-
-      this.speakInTwitch(dummyMessage);
-      
-    }
-    
+  run() {
+    this.establishTwitchClient();
+    //this.establishDiscordClient();
+    this.startTimers();
   }
 
   // estabishes a client that can send and receive messages from Discord
