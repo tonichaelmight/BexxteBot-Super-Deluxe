@@ -1,6 +1,7 @@
 // if you're trying to make a new command, this is the right page; scroll down a bit further
 const { logError } = require('./utils.js');
 const fileName = require('path').basename(__filename);
+const { readFileSync, appendFile, writeFileSync } = require('fs');
 
 // Basic commands will yield the same output every time they are executed -- foundation for more specialized command types
 class TwitchCommand {
@@ -122,18 +123,17 @@ class AsyncTwitchCallbackCommand extends TwitchCallbackCommand {
 
 }
 
-
-
-// CURRENT WORK
 class TwitchCounterCommand extends TwitchCommand {
 
-  constructor(name, callback, cooldown_ms = 10000) {
-    super(name, callback, cooldown_ms);
-    // twitchCommands[name] = this;
-    // twitchCommands[`${name}s`] = this;
+  // Current work
+  constructor(name, outputs, options={}) {
+    super(name, undefined, options);
+    
+    this.outputs = outputs;
+    this.streamerLink = true;
   }
 
-  async evaluateMessage(messageObject) {
+  evaluateMessage(messageObject) {
     const messageWords = messageObject.content.split(' ');
     const command = messageWords[0].slice(1);
     const evaluation = {};
@@ -145,20 +145,20 @@ class TwitchCounterCommand extends TwitchCommand {
         if (messageWords[1] === 'set') {
           evaluation.action = 'set';
           const newValue = messageWords[2];
-          const setSuccess = await this.setValue(newValue);
+          const setSuccess = this.setValue(newValue);
           if (setSuccess) {
             evaluation.successful = true;
             evaluation.endValue = newValue;
           } else {
             evaluation.successful = false;
-            evaluation.endValue = await this.getValue();
+            evaluation.endValue = this.getValue();
             evaluation.attempt = newValue;
           }
         } else {
           evaluation.action = 'add';
-          const currentValue = await this.getValue();
+          const currentValue = this.getValue();
           const newValue = currentValue * 1 + 1;
-          await this.setValue(newValue);
+          this.setValue(newValue);
           evaluation.endValue = newValue;
         }
       } else {
@@ -166,30 +166,42 @@ class TwitchCounterCommand extends TwitchCommand {
       }
     } else if (command === `${this.name}s`) {
       evaluation.action = 'show';
-      evaluation.endValue = await this.getValue();
+      evaluation.endValue = this.getValue();
     }
 
     return evaluation;
 
   }
 
-  async setValue(newValue) {
+  setValue(newValue) {
     if (Number.isNaN(newValue * 1)) {
       return false;
     }
-    await db.set(this.name, newValue);
+
+    let currentCounts;
+    try {
+      currentCounts = JSON.parse(readFileSync(`./streamers/${this.streamerLink.username}/counts.json`, 'utf-8'));
+    } catch(e) {
+      currentCounts = {};
+    }
+    currentCounts[this.name] = newValue;
+
+    writeFileSync(`./streamers/${this.streamerLink.username}/counts.json`, JSON.stringify(currentCounts));
     return true;
   }
 
-  async getValue() {
+  getValue() {
 
-    let currentValue = await db.get(this.name);
-
-    if (!currentValue) {
-      currentValue = 0;
+    let currentCounts;
+    try {
+      currentCounts = JSON.parse(readFileSync(`./streamers/${this.streamerLink.username}/counts.json`, 'utf-8'));
+    } catch(e) {
+      currentCounts = {};
+      currentCounts[this.name] = 0;
+      writeFileSync(`./streamers/${this.streamerLink.username}/counts.json`, JSON.stringify(currentCounts));
     }
 
-    return currentValue;
+    return currentCounts[this.name] || 0;
   }
 
   async execute(messageObject) {
@@ -203,7 +215,7 @@ class TwitchCounterCommand extends TwitchCommand {
     let evaluation;
 
     if (messageObject.tags.mod || messageObject.tags.username === messageObject.channel.slice(1)) {
-      evaluation = await this.evaluateMessage(messageObject);
+      evaluation = this.evaluateMessage(messageObject);
     }
 
     //console.log(evaluation);
@@ -216,7 +228,7 @@ class TwitchCounterCommand extends TwitchCommand {
       if (!evaluation) {
         return;
       }
-      await this.callback(messageObject, evaluation);
+      messageObject.addResponse(this.outputs[evaluation.action](evaluation));
       return;
     } catch (e) {
       logError(`Problem executing the ${this.name} command`, fileName);
@@ -226,89 +238,3 @@ class TwitchCounterCommand extends TwitchCommand {
 }
 
 module.exports = { TwitchCommand, TwitchCallbackCommand, AsyncTwitchCallbackCommand, TwitchCounterCommand };
-
-const test = new TwitchCounterCommand('test', testCallback);
-async function testCallback(messageObject, evaluation) {
-
-  switch (evaluation.action) {
-    case 'set':
-      if (evaluation.successful) {
-        messageObject.addResponse(
-          `You have set the test count to ${evaluation.endValue}.`
-        )
-        break;
-      } else {
-        messageObject.addResponse(
-          `Sorry, I was not able to set the test count to "${evaluation.attempt}". Please make sure you use a number argument. The current test count is ${evaluation.endValue}.`
-        )
-        break;
-      }
-
-    case 'add':
-      messageObject.addResponse(
-        `You have increased the test value by 1. The new test value is ${evaluation.endValue}.`
-      )
-      break;
-
-    case 'show':
-      messageObject.addResponse(
-        `The current test value is ${evaluation.endValue}.`
-      )
-      break;
-  }
-}
-
-const bop = new TwitchCounterCommand('bop', bopCallback);
-async function bopCallback(messageObject, evaluation) {
-
-  switch (evaluation.action) {
-    case 'set':
-      if (evaluation.successful) {
-        messageObject.addResponse(
-          `You have set the number of bops to ${evaluation.endValue} bexxteBonk`
-        )
-        break;
-      } else {
-        messageObject.addResponse(
-          `Sorry, I was not able to set !bops to "${evaluation.attempt}". Please make sure you use a number. Currently, chat has been bopped ${evaluation.endValue} times.`
-        )
-        break;
-      }
-
-    case 'add':
-      messageObject.addResponse(
-        `Chat has been bopped for being horny on main bexxteBonk Y'all been horny (at least) ${evaluation.endValue} times so far for Yakuza.`
-      )
-      break;
-
-    case 'show':
-      messageObject.addResponse(
-        `Chat has been horny for Yakuza ${evaluation.endValue} times`
-      )
-      break;
-  }
-
-}
-
-
-// const test = new TwitchCommand('test', testCallback);
-// function testCallback(messageObject) {
-//   let current = fs.readFileSync(`counters/${this.name}.txt`, 'utf-8');
-
-//   current *= 1;
-//   let neue;
-
-//   if (Number.isNaN(current)) {
-//     neue = 0;
-//   } else {
-//     neue = current + 1;
-//   }
-
-//   fs.writeFileSync(`counters/${this.name}.txt`, neue);
-
-//   messageObject.addResponse(`You have tested ${neue} times.`);
-
-// }
-
-
-

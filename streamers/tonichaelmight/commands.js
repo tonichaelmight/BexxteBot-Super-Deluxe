@@ -5,8 +5,6 @@ const { config } = require('./configuration.js');
 const fileName = require('path').basename(__filename);
 
 
-const Database = require("@replit/database");
-const db = new Database();
 
 
 const commands = {
@@ -292,6 +290,46 @@ const commands = {
       return uptimeOutput;
     }
   ),
+
+  test: new TwitchCounterCommand('test',
+    {
+      set: evaluation => {
+        if (evaluation.successful) {
+          return `You have set the test count to ${evaluation.endValue}.`;
+        }
+        return `Sorry, I was not able to set the test count to "${evaluation.attempt}". Please make sure you use a number argument. The current test count is ${evaluation.endValue}.`;
+      },
+      add: evaluation => {
+        return `You have increased the test value by 1. The new test value is ${evaluation.endValue}.`;
+      },
+      show: evaluation => {
+        return `The current test value is ${evaluation.endValue}.`;
+      }
+    },
+    {
+      aliases: 'tests'
+    }
+  ),
+
+  bop: new TwitchCounterCommand('bop',
+    {
+      set: evaluation => {
+        if (evaluation.successful) {
+          return `You have set the number of bops to ${evaluation.endValue} bexxteBonk`;
+        }
+        return `Sorry, I was not able to set !bops to "${evaluation.attempt}". Please make sure you use a number. Currently, chat has been bopped ${evaluation.endValue} times.`;
+      },
+      add: evaluation => {
+        return `Chat has been bopped for being horny on main bexxteBonk Y'all been horny (at least) ${evaluation.endValue} times so far for Yakuza.`;
+      },
+      show: evaluation => {
+        return `Chat has been horny for Yakuza ${evaluation.endValue} times`;
+      }
+    },
+    {
+      aliases: 'bops'
+    }
+  )
 
   // POSTERITY COMMANDS
 

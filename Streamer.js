@@ -5,19 +5,10 @@ const fileName = require('path').basename(__filename);
 
 class Streamer {
 
-  addCommandAliases(commands) {
-    for (const command in commands) {
-      if (commands[command].options.aliases) {
-        commands[command].options.aliases.forEach(alias => {
-          commands[alias] = commands[command];
-        })
-      }
-    }
-  }
-
   constructor(username, commands, timers, config, bot) {
     this.username = username.startsWith('#') ? username.slice(1) : username;
     this.commands = commands;
+    this.linkCommandsToStreamer(this.commands);
     this.addCommandAliases(this.commands);
     this.timers = timers;
     this.timers.forEach(timer => {
@@ -26,6 +17,24 @@ class Streamer {
     console.log(commands);
     this.config = config;
     this.bot = bot;
+  }
+
+  linkCommandsToStreamer(commands) {
+    for (const command in commands) {
+      if (commands[command].streamerLink) {
+        commands[command].streamerLink = this;
+      }
+    }
+  }
+
+  addCommandAliases(commands) {
+    for (const command in commands) {
+      if (commands[command].options.aliases) {
+        commands[command].options.aliases.forEach(alias => {
+          commands[alias] = commands[command];
+        })
+      }
+    }
   }
 
   static async getCurrentStreamerData(streamer) {
