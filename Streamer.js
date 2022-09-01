@@ -59,6 +59,7 @@ class Streamer {
         try {
 
           requestResult = JSON.parse(requestResult);
+          console.log(requestResult);
 
           let channelData;
           for (const channelObject of requestResult.data) {

@@ -1,22 +1,24 @@
 exports.bexxteConfig = {
 
-  channelName: 'tonichaelmight',//'bexxters',
+  channelName: 'bexxters',
 
   botName: 'bexxtebot',
 
   schedule: {
-    sunday: "Zelle",
-    monday: "Stray",
-    tuesday: "Tales of Symphonia",
+    sunday: "Cult of the Lamb",
+    monday: "Gardens Between",
+    tuesday: "DBD: Resident Evil",
     wednesday: "Yakuza 5",
-    thursday: "No Stream",
+    thursday: "Cult of The Lamb/Tales w/Michael",
     friday: "",
     saturday: ""
   },
 
-  playlist: 'https://www.youtube.com/watch?v=-9gEgshJUuY',
+  playlist: 'https://www.youtube.com/watch?v=yk5o_UuZGOI',
 
-  contentWarning: '',
+  contentWarning: 'bad teammates',
+
+  newvideo: "https://youtu.be/QjjsqwHsvXo",
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
 
@@ -30,6 +32,7 @@ exports.bexxteConfig = {
     'schedule',
     'pride',
     'youtube', 
+    'newvid', 
   ],
 
   quotes: [
@@ -101,16 +104,16 @@ exports.bexxteConfig = {
   ],
 
   dwarvenVows: [
-    'Dwarven Vow #1: Let’s all work together for a more peaceful world.',
+    'Dwarven Vow #1: Let\'s all work together for a more peaceful world.',
     'Dwarven Vow #2: Never abandon someone in need.',
-    'Dwarven Vow #4: Don’t depend on others. Walk on your own two legs.',
+    'Dwarven Vow #4: Don\'t depend on others. Walk on your own two legs.',
     'Dwarven Vow #7: Goodness and love will always win.',
     'Dwarven Vow #11: Lying is the first step down the path of thievery.'
   ],
 
   socials: {
     twitter: 'https://twitter.com/Bexterkins',
-    tiktok: 'https://vm.tiktok.com/ZMeWAw77Q/',
+    tiktok: 'https://www.tiktok.com/@bexxtersttv',
     youtube: 'https://www.youtube.com/channel/UCERe51LWgXJF48btFjyR1Kg'
   }
 
