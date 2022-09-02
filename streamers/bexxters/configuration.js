@@ -1,4 +1,4 @@
-exports.bexxteConfig = {
+bexxteConfig = {
 
   channelName: 'bexxters',
 
@@ -19,6 +19,8 @@ exports.bexxteConfig = {
   contentWarning: 'bad teammates',
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
+
+  newvid: 'https://www.youtube.com/watch?v=l_W3OM6E4OM',
 
   timerCommands: [
     'discord',
@@ -116,3 +118,5 @@ exports.bexxteConfig = {
   }
 
 }
+
+module.exports = { bexxteConfig, config: bexxteConfig};

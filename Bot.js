@@ -3,8 +3,6 @@ const { logError } = require('./utils.js');
 const fileName = require('path').basename(__filename);
 
 const { TwitchMessage } = require('./TwitchMessage.js');
-const { twitchCommands } = require('./TwitchCommand.js');
-const { twitchTimer, dwarvenVowTimer } = require('./Timer.js');
 const { Streamer } = require('./Streamer.js');
 
 class Bot {
@@ -48,27 +46,27 @@ class Bot {
       const twitchMessage = new TwitchMessage(channel, tags, message, self);
 
       //console.log(twitchMessage); 
-      
+
       try {
 
-      // there are no errors expected here, so if something does happen it gets logged in error.txt and we keep the program running (otherwise bexxteBot stops :/ )
-        
+        // there are no errors expected here, so if something does happen it gets logged in error.txt and we keep the program running (otherwise bexxteBot stops :/ )
+
         await this.processTwitchMessage(twitchMessage);
-        
-      } catch(error) {
-        
+
+      } catch (error) {
+
         logError(`Error encountered while processing a Twitch Message in ${channel}`, fileName);
         logError(error, fileName);
-        
+
       }
-      
+
     })
   }
 
   // moderates twitch messages
   moderateTwitchMessage(twitchMessage) {
     if (twitchMessage.needsModeration()) {
-      this.streamers[twitchMessage.channel.slice(1)].config.forbidden.forEach(word => { 
+      this.streamers[twitchMessage.channel.slice(1)].config.forbidden.forEach(word => {
         if (twitchMessage.content.includes(word)) {
           twitchMessage.addResponse(
             `Naughty naughty, @${twitchMessage.tags.username}! We don't use that word here!`,
@@ -97,7 +95,7 @@ class Bot {
 
     const command = messageWords[0].slice(1);
 
-    return command;    
+    return command;
 
   }
 
@@ -131,7 +129,7 @@ class Bot {
           twitchMessage.channel,
           'hotpink'
         );
-        
+
       } else {
         //console.log('hi');
         this.twitchClient.say(
@@ -146,7 +144,7 @@ class Bot {
 
   // passes twitch messages through moderation and then looks for a command. sends a message through twitch if one is created
   async processTwitchMessage(twitchMessage) {
-    this.moderateTwitchMessage(twitchMessage); 
+    this.moderateTwitchMessage(twitchMessage);
 
     if (twitchMessage.response) {
       this.speakInTwitch(twitchMessage);
@@ -163,7 +161,7 @@ class Bot {
     if (twitchMessage.response) {
       try {
         this.speakInTwitch(twitchMessage);
-      } catch(e) {
+      } catch (e) {
         logError('Probably attempted to say an undefined message', fileName);
         logError(e, fileName);
       }

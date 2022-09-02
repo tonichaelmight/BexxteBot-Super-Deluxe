@@ -10,7 +10,7 @@ class TwitchMessage {
   }
 
   needsModeration() {
-    return !(this.tags.mod || (this.tags.badges && this.tags.badges.vip) || this.tags.username === ev.CHANNEL_NAME);
+    return !(this.tags.mod || (this.tags.badges && this.tags.badges.vip) || this.tags.username === this.channel.slice(1));
   }
 
   addResponse(output, mean=false) {
