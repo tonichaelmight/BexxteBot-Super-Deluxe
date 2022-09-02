@@ -16,13 +16,12 @@ class Bot {
     this.channels.forEach(channel => {
       const { commands } = require(`./streamers/${channel}/commands.js`);
       const { timers } = require(`./streamers/${channel}/timers.js`);
-      //console.log(timers);
       const { config } = require(`./streamers/${channel}/configuration.js`);
       this.streamers[channel] = new Streamer(channel, commands, timers, config, this);
     });
   }
 
-  // estabishes a client that can send and receive messages from Twitch
+  // estabishes a client that can read and send messages from/to Twitch
   establishTwitchClient() {
     this.twitchClient = new twitch.Client({
       options: {
@@ -44,8 +43,6 @@ class Bot {
     // listens for messages, determined by the "channels" property defined in the connection above
     this.twitchClient.on('message', async (channel, tags, message, self) => {
       const twitchMessage = new TwitchMessage(channel, tags, message, self);
-
-      //console.log(twitchMessage); 
 
       try {
 
@@ -77,6 +74,7 @@ class Bot {
     }
   }
 
+  // assesses a twitch message to see if it has a command structure ("!lurk" anywhere in a message, or any message beginning with "!")
   async searchForTwitchCommand(twitchMessage) {
 
     // lurk is built different; can be used anywhere in a message, not just the beginning
@@ -86,13 +84,14 @@ class Bot {
       return 'lurk';
     }
 
-    // console.log(twitchMessage);
+    // besides !lurk, all commands must be at the beginning of the message
     if (!twitchMessage.content.startsWith('!')) {
       return;
     }
 
     const messageWords = twitchMessage.content.split(' ');
 
+    // get first word and remove the "!"
     const command = messageWords[0].slice(1);
 
     return command;
@@ -100,12 +99,14 @@ class Bot {
   }
 
   async executeTwitchCommand(twitchMessage, command) {
-    //console.log(this.streamers[twitchMessage.channel.slice(1)])
+    // check if command exists for streamer
     if (this.streamers[twitchMessage.channel.slice(1)].commands[command]) {
+      // call the command's execute() method
       await this.streamers[twitchMessage.channel.slice(1)].commands[command].execute(twitchMessage);
     }
   }
 
+  // speaks TwitchResponse objects from the twitchMessage's .response property
   speakInTwitch(twitchMessage) {
 
     twitchMessage.response.forEach(responseLine => {
@@ -117,6 +118,7 @@ class Bot {
           20,
           'used forbidden term'
         );
+        // she mad
         this.twitchClient.color(
           twitchMessage.channel,
           'red'
@@ -125,13 +127,13 @@ class Bot {
           twitchMessage.channel,
           responseLine.output
         );
+        // cool it
         this.twitchClient.color(
           twitchMessage.channel,
           'hotpink'
         );
 
       } else {
-        //console.log('hi');
         this.twitchClient.say(
           twitchMessage.channel,
           responseLine.output,
@@ -142,13 +144,13 @@ class Bot {
 
   }
 
-  // passes twitch messages through moderation and then looks for a command. sends a message through twitch if one is created
+  // passes twitch messages through moderation and then looks for a command. sends a response message in twitch if one is created
   async processTwitchMessage(twitchMessage) {
     this.moderateTwitchMessage(twitchMessage);
 
     if (twitchMessage.response) {
       this.speakInTwitch(twitchMessage);
-      // if a message gets modded, no need to keep going
+      // if a message gets modded, any commands will be ignored
       return;
     }
 
@@ -156,8 +158,7 @@ class Bot {
 
     await this.executeTwitchCommand(twitchMessage, command);
 
-    //console.log(twitchMessage);
-
+    // only speak if she has something to say
     if (twitchMessage.response) {
       try {
         this.speakInTwitch(twitchMessage);
@@ -178,6 +179,7 @@ class Bot {
     }
   }
 
+  // top level command -- this is run directly in bexxtebot.js
   run() {
     this.establishTwitchClient();
     //this.establishDiscordClient();
