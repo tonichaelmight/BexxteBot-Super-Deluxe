@@ -11,7 +11,7 @@ class TwitchCommand {
     this.commandText = commandText;
 
     this.options = {};
-    this.options.cooldown_ms = options.cooldown_ms !== undefined ? options.cooldown_ms : 10000;
+    this.options.cooldown_ms = options.cooldown_ms !== undefined ? options.cooldown_ms : 10000; // default cooldown is 10 sec
     this.options.modOnly = options.modOnly || false;
     
     if (options.aliases) {
@@ -33,7 +33,7 @@ class TwitchCommand {
   }
 
   execute(messageObject) {
-    //console.log(messageObject);
+    // don't execute if the user is not a mod and the command is mod-only or on cooldown
     if (!messageObject.tags.mod && !(messageObject.tags.username === messageObject.channel.slice(1))) {
       if (this.options.modOnly || this.onCooldown) {
         return;
@@ -77,6 +77,7 @@ class TwitchCallbackCommand extends TwitchCommand {
 
     try {
 
+      // pass the message object if the command needs to reference it
       this.options.refsMessage ? messageObject.addResponse(this.callback(messageObject)) : messageObject.addResponse(this.callback());
       
     } catch (e) {
@@ -137,10 +138,9 @@ class TwitchCounterCommand extends TwitchCommand {
     const command = messageWords[0].slice(1);
     const evaluation = {};
 
-    //console.log(command);
-
     if (command === this.name) {
       if (messageObject.tags.mod || messageObject.tags.username === messageObject.channel.slice(1)) {
+        // !test set
         if (messageWords[1] === 'set') {
           evaluation.action = 'set';
           const newValue = messageWords[2];
@@ -153,6 +153,7 @@ class TwitchCounterCommand extends TwitchCommand {
             evaluation.endValue = this.getValue();
             evaluation.attempt = newValue;
           }
+        // !test
         } else {
           evaluation.action = 'add';
           const currentValue = this.getValue();
@@ -163,6 +164,7 @@ class TwitchCounterCommand extends TwitchCommand {
       } else {
         return;
       }
+    // !tests
     } else if (command === `${this.name}s`) {
       evaluation.action = 'show';
       evaluation.endValue = this.getValue();
@@ -204,7 +206,6 @@ class TwitchCounterCommand extends TwitchCommand {
   }
 
   async execute(messageObject) {
-    //console.log(messageObject);
     if (!messageObject.tags.mod && !(messageObject.tags.username === messageObject.channel.slice(1))) {
       if (this.modOnly || this.onCooldown) {
         return;
@@ -216,8 +217,6 @@ class TwitchCounterCommand extends TwitchCommand {
     if (messageObject.tags.mod || messageObject.tags.username === messageObject.channel.slice(1)) {
       evaluation = this.evaluateMessage(messageObject);
     }
-
-    //console.log(evaluation);
 
     if (this.cooldown_ms) {
       this.createCooldown();

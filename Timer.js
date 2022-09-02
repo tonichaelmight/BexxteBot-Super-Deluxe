@@ -1,4 +1,3 @@
-const { bexxteConfig } = require('./streamers/bexxters/configuration.js');
 const { TwitchMessage } = require('./TwitchMessage.js');
 
 // TIMER CLASS

@@ -19,6 +19,7 @@ class Streamer {
     this.bot = bot;
   }
 
+  // for commands that require a direct link to the Streamer object they fall under
   linkCommandsToStreamer(commands) {
     for (const command in commands) {
       if (commands[command].streamerLink) {
@@ -27,6 +28,7 @@ class Streamer {
     }
   }
 
+  // for commands that can be triggered by multiple base commands
   addCommandAliases(commands) {
     for (const command in commands) {
       if (commands[command].options.aliases) {
@@ -37,6 +39,7 @@ class Streamer {
     }
   }
 
+  // static class for getting streamer data using the streamer's display name
   static async getCurrentStreamerData(streamer) {
     const channelRequestOptions = {
       hostname: 'api.twitch.tv',
@@ -48,7 +51,9 @@ class Streamer {
       }
     }
 
+    // will store the full result of the http request
     let requestResult = '';
+    // will store only the data for the streamer requested
     let streamerData = '';
 
     const channelInfoRequest = https.request(channelRequestOptions, res => {
@@ -59,7 +64,6 @@ class Streamer {
         try {
 
           requestResult = JSON.parse(requestResult);
-          //console.log(requestResult);
 
           let channelData;
           for (const channelObject of requestResult.data) {
@@ -76,6 +80,8 @@ class Streamer {
           streamerData = channelData;
 
         } catch (e) {
+          // if the data comes in multiple chunks, the initial attempts will fail since the data is incomplete. Throws "SyntaxError: Unexpected end of JSON input"
+          // this can be ignored
           if (!(e.name === 'SyntaxError' && e.message === 'Unexpected end of JSON input')) {
             logError(e, fileName);
           }
@@ -86,27 +92,28 @@ class Streamer {
     });
 
     channelInfoRequest.on('error', error => {
-      console.log(error);
+      logError(error, fileName);
     })
 
     channelInfoRequest.end();
 
     let cycles = 0;
 
+    // attempt once per second for five seconds to resolve the promise with streamerData. Otherwise, reject
     return new Promise((resolve, reject) => {
       const resolutionTimeout = setInterval(() => {
         if (streamerData) {
-          //console.log(streamerData);
           resolve(streamerData);
           clearInterval(resolutionTimeout);
-        } else if (cycles > 20) {
+        } else if (cycles > 5) {
           reject('no streamer data found');
         }
         cycles++;
-      }, 250)
+      }, 1000)
     })
   }
 
+  // instance level wrapper for static method
   async getCurrentStreamerData(streamer=this.username) {
     return await Streamer.getCurrentStreamerData(streamer);
   }

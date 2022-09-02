@@ -4,9 +4,6 @@ const { Streamer } = require('../../Streamer.js');
 const { bexxteConfig } = require('./configuration.js');
 const fileName = require('path').basename(__filename);
 
-
-
-
 const commands = {
 
   // BASIC COMMANDS
