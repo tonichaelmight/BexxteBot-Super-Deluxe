@@ -5,13 +5,13 @@ bexxteConfig = {
   botName: 'bexxtebot',
 
   schedule: {
-    sunday: "Cult of the Lamb",
-    monday: "Gardens Between",
-    tuesday: "DBD: Resident Evil",
-    wednesday: "Yakuza 5",
-    thursday: "Cult of The Lamb/Tales w/Michael",
-    friday: "",
-    saturday: ""
+    SUN: "Cult of the Lamb",
+    MON: "Gardens Between",
+    TUES: "DBD: Resident Evil",
+    WEDS: "Yakuza 5",
+    THURS: "Cult of The Lamb/Tales w/Michael",
+    FRI: "",
+    SAT: ""
   },
 
   playlist: 'https://www.youtube.com/watch?v=yk5o_UuZGOI',

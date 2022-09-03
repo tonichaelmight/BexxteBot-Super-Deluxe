@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@replit/database": "^2.0.1",
     "discord.js": "^13.6.0",
     "tmi.js": "^1.8.5"
   }
