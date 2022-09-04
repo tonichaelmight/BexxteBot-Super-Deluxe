@@ -7,7 +7,7 @@ bexxteConfig = {
   schedule: {
     SUN: "Cult of the Lamb",
     MON: "Gardens Between",
-    TUES: "DBD: Resident Evil",
+    TUES: "FearFest Watchalong",
     WEDS: "Yakuza 5",
     THURS: "Cult of The Lamb/Tales w/Michael",
     FRI: "",
@@ -16,7 +16,7 @@ bexxteConfig = {
 
   playlist: 'https://www.youtube.com/watch?v=yk5o_UuZGOI',
 
-  contentWarning: 'bad teammates',
+  contentWarning: 'cult stuff',
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
 
