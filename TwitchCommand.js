@@ -1,7 +1,7 @@
 // if you're trying to make a new command, this is the right page; scroll down a bit further
 const { logError } = require('./utils.js');
 const fileName = require('path').basename(__filename);
-const { readFileSync, appendFile, writeFileSync } = require('fs');
+const { readFileSync, writeFileSync } = require('fs');
 
 // Basic commands will yield the same output every time they are executed -- foundation for more specialized command types
 class TwitchCommand {

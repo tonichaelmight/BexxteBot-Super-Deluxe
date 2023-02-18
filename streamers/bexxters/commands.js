@@ -21,10 +21,10 @@ const commands = {
   follow: new TwitchCommand('follow', 'Hit the <3 to follow and get notified whenever I go live! It also makes my cold heart a little bit warmer!'),
 
   newvid: new TwitchCommand('newvid', `Check out the most recent upload! ${bexxteConfig.newvid}`),
-  
+
   prime: new TwitchCommand('prime', 'Link your amazon prime to twitch to get a free sub every month and put those Bezos Bucks to work'),
 
-  raid: new TwitchCommand('raid', "Welcome and thank you for the raid! When people raid, they sadly don't count to twitch averages, so it would be a big help if you could get rid of the '?referrer=raid' in the url! I appreciate you so much! bexxteLove", {cooldown_ms: 0, modOnly: true}),
+  raid: new TwitchCommand('raid', "Welcome and thank you for the raid! When people raid, they sadly don't count to twitch averages, so it would be a big help if you could get rid of the '?referrer=raid' in the url! I appreciate you so much! bexxteLove", { cooldown_ms: 0, modOnly: true }),
 
   socials: new TwitchCommand('socials', `Come follow me on these other platforms as well!         
   ||     Twitter: ${bexxteConfig.socials.twitter}      
@@ -35,19 +35,25 @@ const commands = {
 
   sub: new TwitchCommand('sub', 'Want ad-free viewing, cute bat emotes, and a cool tombstone next to your name? Hit the subscribe button to support the stream bexxteLove'),
 
-  welcome: new TwitchCommand('welcome', 'his has bondage to you too owo WELCOME'),
+  //welcome: new TwitchCommand('welcome', 'his has bondage to you too owo WELCOME'),
 
-  whomst: new TwitchCommand('whomst', "I'm a Variety Streamer mostly streaming RPGs, Horror, and Indie stuff because I'm not good at Battle Royale FPS games and can't commit to MMOs. You can catch me live Sunday through Thursday at 8:00pm EST! We do Spooky Sunday with horror/suspense games every Sunday!", {cooldown_ms:2000}),
+  whomst: new TwitchCommand('whomst', "I'm a Variety Streamer mostly streaming RPGs, Horror, and Indie stuff because I'm not good at Battle Royale FPS games and can't commit to MMOs. You can catch me live Sunday through Thursday at 8:00pm EST! We do Spooky Sunday with horror/suspense games every Sunday!", { cooldown_ms: 2000 }),
 
   youtube: new TwitchCommand('youtube', `Check out edited short plays and full stream uploads over on my Youtube: ${bexxteConfig.socials.youtube}`),
 
+  goals: new TwitchCommand('goals', "I'm looking to hit 600 followers by the end of the year! So if you're enjoying what you see, feel free to hit the heart to help me get there! bexxteLove"),
+
+  alerts: new TwitchCommand('alerts', "We have scare alerts at all bit amounts up to 900! There's also channel point scares! Happy Halloween - do your worst peepoTreat"),
+
+  //docket: new TwitchCommand('docket',"Today's Plan: 2pm - Chat and look back at the year; 3pm - Beat Elden Ring; 5pm - GOTY Tierlist & Chat Awards; 7pm - Chat Controlled Games!; 10pm-2am - Games With Friends"),
+
   // PEOPLE COMMANDS -- SUBSET OF BASIC
 
-  marta: new TwitchCommand('marta', 'Check out (and maybe commission) our UwUest mod and amazing artist Marta over at https://twitter.com/_martuwu or https://martuwuu.carrd.co', {cooldown_ms:5000}),
+  marta: new TwitchCommand('marta', 'Check out (and maybe commission) our UwUest mod and amazing artist Marta over at https://twitter.com/_martuwu or https://martuwuu.carrd.co', { cooldown_ms: 5000 }),
 
-  tim: new TwitchCommand('tim', 'my partner of 7 years. person I complain to when my stream randomly dies. pretty cool dude.', {cooldown_ms:5000}),
+  tim: new TwitchCommand('tim', 'my partner of 7 years. person I complain to when my stream randomly dies. pretty cool dude.', { cooldown_ms: 5000 }),
 
-  yackie: new TwitchCommand('yackie', 'Check out one of my bestest buds and overall cool gal Jackie at twitch.tv/broocat!', {cooldown_ms:5000}),
+  yackie: new TwitchCommand('yackie', 'Check out one of my bestest buds and overall cool gal Jackie at twitch.tv/broocat!', { cooldown_ms: 5000 }),
 
   // EXCEPT HER
 
@@ -62,8 +68,8 @@ const commands = {
   ),
 
   lurk: new TwitchCallbackCommand('lurk',
-    (messageObject) => `${messageObject.tags.username} is now lurkin in the chat shadows. Stay awhile and enjoy! bexxteCozy`, 
-    {refsMessage: true}),
+    (messageObject) => `${messageObject.tags.username} is now lurkin in the chat shadows. Stay awhile and enjoy! bexxteCozy`,
+    { refsMessage: true }),
 
   music: new TwitchCallbackCommand('music',
     () => bexxteConfig.playlist ? `Today's playlist is ${bexxteConfig.playlist}` : 'this bitch empty, yeet'
@@ -71,7 +77,7 @@ const commands = {
 
   mute: new TwitchCallbackCommand('mute',
     messageObject => [`@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`, `@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`, `@${messageObject.channel.slice(1).toUpperCase()} HEY QUEEN 👸👸👸 YOU'RE MUTED`],
-    {refsMessage:true, aliases:['muted']}
+    { refsMessage: true, aliases: ['muted'] }
   ),
 
   pitbull: new TwitchCallbackCommand('pitbull',
@@ -122,10 +128,10 @@ const commands = {
 
       return raidingMessage;
     },
-    {refsMessage:true, cooldown_ms:0, modOnly:true}
+    { refsMessage: true, cooldown_ms: 0, modOnly: true }
   ),
 
-  schedule: new TwitchCallbackCommand('schedule', 
+  schedule: new TwitchCallbackCommand('schedule',
     () => {
       const days = ['SUN', 'MON', 'TUES', 'WEDS', 'THURS', 'FRI', 'SAT'];
       let responseString = '';
@@ -170,73 +176,78 @@ const commands = {
           ${bexxteConfig.validations[v2]}
           ${bexxteConfig.validations[v3]}`;
     },
-    {refsMessage:true, cooldown_ms:5000}
+    { refsMessage: true, cooldown_ms: 5000 }
   ),
 
   // ASYNC CALLBACK COMMANDS
 
+  // shoutout command
   so: new AsyncTwitchCallbackCommand('so',
     async messageObject => {
       let recipient = messageObject.content.split(' ')[1];
       let output;
 
-        if (!recipient) {
-          return;
-        }
-      
-        while (recipient.startsWith('@')) {
-          recipient = recipient.slice(1);
-        }
-      
-        if (recipient === messageObject.channel.slice(1)) {
-          output = `@${recipient} is pretty cool, but she doesn't need a shoutout on her own channel.`;
+      if (!recipient) {
+        return;
+      }
+
+      while (recipient.startsWith('@')) {
+        recipient = recipient.slice(1);
+      }
+
+      if (recipient === messageObject.channel.slice(1)) {
+        output = `@${recipient} is pretty cool, but she doesn't need a shoutout on her own channel.`;
+        return output;
+      }
+
+      if (recipient === messageObject.tags.username) {
+        output = `Nice try @${recipient}, you can't give yourself a shoutout!`;
+        return output;
+      }
+
+      let streamerData;
+
+      try {
+        streamerData = await Streamer.getCurrentStreamerData(recipient);
+      } catch (e) {
+        if (e === 'no streamer data found') {
+          output = `Couldn't find a channel named "${recipient}"`;
           return output;
         }
-      
-        if (recipient === messageObject.tags.username) {
-          output = `Nice try @${recipient}, you can't give yourself a shoutout!`;
-          return output;
-        }
+        logError('Error occurred while retrieving streamer data in the shoutout command', fileName);
+        logError(e, fileName);
+      }
 
-        let streamerData;
+      let shoutout = '';
 
-        try {
-          streamerData = await Streamer.getCurrentStreamerData(recipient);
-        } catch(e) {
-          logError('Error occurred while retrieving streamer data in the shoutout command', fileName);
-          logError(e, fileName);
-        }
-
-        let shoutout = '';
-      
-        if (!streamerData.game_name) {
-          shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! bexxteLove`;
-        } else if (streamerData.is_live) {
-          if (streamerData.game_name === 'Just Chatting') {
-            shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They are currently "${streamerData.game_name}" bexxteLove`;
-          } else {
-            shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They are currently playing "${streamerData.game_name}" bexxteLove`;
-          }
-          // or offline
+      if (!streamerData.game_name) {
+        shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! bexxteLove`;
+      } else if (streamerData.is_live) {
+        if (streamerData.game_name === 'Just Chatting') {
+          shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They are currently "${streamerData.game_name}" bexxteLove`;
         } else {
-          if (streamerData.game_name === 'Just Chatting') {
-            shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They were last seen "${streamerData.game_name}" bexxteLove`;
-          } else {
-            shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They were last seen playing "${streamerData.game_name}" bexxteLove`;
-          }
+          shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They are currently playing "${streamerData.game_name}" bexxteLove`;
         }
-      
-        return shoutout;
+        // or offline
+      } else {
+        if (streamerData.game_name === 'Just Chatting') {
+          shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They were last seen "${streamerData.game_name}" bexxteLove`;
+        } else {
+          shoutout += `Everyone go check out @${streamerData.display_name} at twitch.tv/${streamerData.broadcaster_login}! They were last seen playing "${streamerData.game_name}" bexxteLove`;
+        }
+      }
+
+      return shoutout;
     },
-    {refsMessage:true, modOnly:true, cooldown_ms:0}
+    { refsMessage: true, modOnly: true, cooldown_ms: 0 }
   ),
 
-  uptime: new AsyncTwitchCallbackCommand('uptime', 
+  uptime: new AsyncTwitchCallbackCommand('uptime',
     async () => {
       let streamerData;
       try {
         streamerData = await Streamer.getCurrentStreamerData(bexxteConfig.channelName);
-      } catch(e) {
+      } catch (e) {
         logError('Error occurred while retrieving streamer data in the uptime command', fileName);
         logError(e, fileName);
       }
@@ -332,9 +343,7 @@ const commands = {
 
   // POSTERITY COMMANDS
 
-  // goals: new TwitchCommand('goals', "I'm hoping to hit 500 followers by the end of the year! So if you're enjoying what you see, feel free to hit the heart to help me get there! bexxteLove"),
-
-  // nqny: new TwitchCommand('nqny', "December 30th is Not Quite New Years: Round 2! Starting at 2PM eastern I'll be streaming for twelve hours as a celebration for this past year of streams and party with chat! We'll follow up from last year's stream with Spyro 2, a Fishing Minigame tier list, Alien Isolation Nightmare mode, Steam Giftcard Giveaways, and more!"),
+  //nqny: new TwitchCommand('nqny', "December 30th is Not Quite New Years: Round 3! Starting at 2PM eastern I'll be streaming for twelve hours as a celebration for this past year of streams and party with chat! We've got a bunch of fun planed such as Chat Superlatives, Best & Worst of the Year tier lists, Beating GOTY Elden Ring, Steam Giftcard Giveaways, and more!"),
 
   // donate: new TwitchCommand('donate', "For $5 you get a random doodle, at $15 you get to choose what I draw for you (sfw). You can only get 2 drawings per donation. I'll do these in a bad art stream near the end of the month. If you'd like to donate to support the National Children's Alliance and their campaign against child abuse, click here: https://donate.tiltify.com/@bexxters/itsyourbusiness Thank you for your generosity!"),
 

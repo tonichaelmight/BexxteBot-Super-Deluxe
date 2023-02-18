@@ -5,22 +5,22 @@ bexxteConfig = {
   botName: 'bexxtebot',
 
   schedule: {
-    SUN: "Cult of the Lamb",
-    MON: "Gardens Between",
-    TUES: "FearFest Watchalong",
-    WEDS: "Yakuza 5",
-    THURS: "Cult of The Lamb/Tales w/Michael",
-    FRI: "",
+    SUN: "",
+    MON: "???",
+    TUES: "???",
+    WEDS: "Vampyr",
+    THURS: "Tales/Dead Space",
+    FRI: "Birth",
     SAT: ""
   },
 
-  playlist: 'https://www.youtube.com/watch?v=yk5o_UuZGOI',
+  playlist: 'https://www.youtube.com/watch?v=rc53oCjqu-U',
 
-  contentWarning: 'cult stuff',
+  contentWarning: '',
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
 
-  newvid: 'https://www.youtube.com/watch?v=l_W3OM6E4OM',
+  newvid: 'https://youtu.be/yc9XvBGVg64',
 
   timerCommands: [
     'discord',
@@ -113,8 +113,8 @@ bexxteConfig = {
 
   socials: {
     twitter: 'https://twitter.com/Bexterkins',
-    tiktok: 'https://vm.tiktok.com/ZMeWAw77Q/',
-    youtube: 'https://www.youtube.com/channel/UCERe51LWgXJF48btFjyR1Kg'
+    tiktok: 'https://www.tiktok.com/@bexxtersttv',
+    youtube: 'https://www.youtube.com/@thebexxters'
   }
 
 }

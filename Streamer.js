@@ -107,6 +107,7 @@ class Streamer {
           clearInterval(resolutionTimeout);
         } else if (cycles > 5) {
           reject('no streamer data found');
+          clearInterval(resolutionTimeout);
         }
         cycles++;
       }, 1000)
