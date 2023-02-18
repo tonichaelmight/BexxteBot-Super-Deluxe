@@ -181,9 +181,13 @@ class Bot {
 
   // top level command -- this is run directly in bexxtebot.js
   run() {
-    this.establishTwitchClient();
-    //this.establishDiscordClient();
-    this.startTimers();
+    try {
+      this.establishTwitchClient();
+      //this.establishDiscordClient();
+      this.startTimers();
+    } catch(e) {
+      logError(e, fileName);
+    }
   }
 
   // estabishes a client that can send and receive messages from Discord

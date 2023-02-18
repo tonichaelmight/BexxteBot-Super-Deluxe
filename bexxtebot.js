@@ -4,11 +4,17 @@
 
 // REQUIRES
 const ev = require('./ev.js'); // environment variables
+const { logError } = require('./utils.js');
+const fileName = require('path').basename(__filename);
 
 //const discord = require('discord.js');
 const { Bot } = require('./Bot.js');
 
 // THE QUEEN AND LEGEND HERSELF
-const bexxteBot = new Bot(ev.BOT_NAME, ev.BROADCASTING_CHANNELS, ev.TWITCH_OAUTH_TOKEN);
+const bexxteBot = new Bot(ev.BOT_NAME, ev.BROADCASTING_CHANNELS, ev.BEXXTEBOT_TOKEN);
 
-bexxteBot.run();
+try {
+  bexxteBot.run();
+} catch(e){
+  logError(e, fileName);
+}

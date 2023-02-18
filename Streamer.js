@@ -64,6 +64,9 @@ class Streamer {
         try {
 
           requestResult = JSON.parse(requestResult);
+          if (requestResult.message && requestResult.message === 'Invalid OAuth token') {
+            throw new Error(requestResult.message);
+          }
 
           let channelData;
           for (const channelObject of requestResult.data) {
