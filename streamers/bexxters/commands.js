@@ -21,6 +21,8 @@ const commands = {
   follow: new TwitchCommand('follow', 'Hit the <3 to follow and get notified whenever I go live! It also makes my cold heart a little bit warmer!'),
 
   newvid: new TwitchCommand('newvid', `Check out the most recent upload! ${bexxteConfig.newvid}`),
+  
+  highlights: new TwitchCommand('highlights', `Check out our monthly highlight video! ${bexxteConfig.highlights}`),
 
   prime: new TwitchCommand('prime', 'Link your amazon prime to twitch to get a free sub every month and put those Bezos Bucks to work'),
 

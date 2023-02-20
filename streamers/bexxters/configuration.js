@@ -5,12 +5,12 @@ bexxteConfig = {
   botName: 'bexxtebot',
 
   schedule: {
-    SUN: "",
-    MON: "???",
-    TUES: "???",
+    SUN: "Dreams In The Witch House",
+    MON: "Vampyr",
+    TUES: "Monster Prom",
     WEDS: "Vampyr",
-    THURS: "Tales/Dead Space",
-    FRI: "Birth",
+    THURS: "Tales/Fortnite",
+    FRI: "",
     SAT: ""
   },
 
@@ -20,7 +20,9 @@ bexxteConfig = {
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
 
-  newvid: 'https://youtu.be/yc9XvBGVg64',
+  newvid: 'https://youtu.be/QQTXHVIl7Ig',
+
+  highlights: 'https://youtu.be/yc9XvBGVg64',
 
   timerCommands: [
     'discord',
