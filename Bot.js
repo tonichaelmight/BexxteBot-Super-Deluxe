@@ -1,6 +1,5 @@
 import twitch from 'tmi.js';
 import { logError } from './utils.js';
-import path from 'path';
 
 import TwitchMessage from './TwitchMessage.js';
 import Streamer from './Streamer.js';
