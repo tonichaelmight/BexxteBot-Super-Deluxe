@@ -1,10 +1,9 @@
-const { logError } = require('../../utils.js');
-const { TwitchCommand, TwitchCallbackCommand, AsyncTwitchCallbackCommand, TwitchCounterCommand } = require('../../TwitchCommand.js');
-const { Streamer } = require('../../Streamer.js');
-const { bexxteConfig } = require('./configuration.js');
-const fileName = require('path').basename(__filename);
+import { logError } from '../../utils.js';
+import { TwitchCommand, TwitchCallbackCommand, AsyncTwitchCallbackCommand, TwitchCounterCommand } from '../../TwitchCommand.js';
+import Streamer from '../../Streamer.js';
+import { bexxteConfig } from './configuration.js';
 
-const commands = {
+export const commands = {
 
   // BASIC COMMANDS
 
@@ -21,6 +20,8 @@ const commands = {
   follow: new TwitchCommand('follow', 'Hit the <3 to follow and get notified whenever I go live! It also makes my cold heart a little bit warmer!'),
 
   newvid: new TwitchCommand('newvid', `Check out the most recent upload! ${bexxteConfig.newvid}`),
+  
+  highlights: new TwitchCommand('highlights', `Check out our monthly highlight video! ${bexxteConfig.highlights}`),
 
   prime: new TwitchCommand('prime', 'Link your amazon prime to twitch to get a free sub every month and put those Bezos Bucks to work'),
 
@@ -43,7 +44,13 @@ const commands = {
 
   goals: new TwitchCommand('goals', "I'm looking to hit 600 followers by the end of the year! So if you're enjoying what you see, feel free to hit the heart to help me get there! bexxteLove"),
 
-  alerts: new TwitchCommand('alerts', "We have scare alerts at all bit amounts up to 900! There's also channel point scares! Happy Halloween - do your worst peepoTreat"),
+  tap: new TwitchCommand('tap',"No Backseating, No Spoilers, No 'it's just a suggestion/what I did' type comments to get around that. Don't make Mods Tap the Sign again."),
+
+  //alerts: new TwitchCommand('alerts', "We have scare alerts at all bit amounts up to 900! There's also channel point scares! Happy Halloween - do your worst peepoTreat"),
+
+  //ms: new TwitchCommand('ms', "Multiple Sclerosis is a disease that impacts the nervous system. It causes the immune system to damage myelin, the coating of our nerve fibers. This causes an array symptoms such as numbness, tingling, mood changes, memory problems, pain, fatigue, or in extreme cases - blindness and/or paralysis. There is currently no known cause or cure."),
+
+  //donate: new TwitchCommand('donate', "If you'd like to donate to support the National Multiple Sclerosis Society and their campaign to cure MS, click here: https://donate.tiltify.com/@bexxters/stream-to-end-ms-2023 Thank you for your generosity!"),
 
   //docket: new TwitchCommand('docket',"Today's Plan: 2pm - Chat and look back at the year; 3pm - Beat Elden Ring; 5pm - GOTY Tierlist & Chat Awards; 7pm - Chat Controlled Games!; 10pm-2am - Games With Friends"),
 
@@ -214,8 +221,8 @@ const commands = {
           output = `Couldn't find a channel named "${recipient}"`;
           return output;
         }
-        logError('Error occurred while retrieving streamer data in the shoutout command', fileName);
-        logError(e, fileName);
+        
+        logError(e);
       }
 
       let shoutout = '';
@@ -248,8 +255,7 @@ const commands = {
       try {
         streamerData = await Streamer.getCurrentStreamerData(bexxteConfig.channelName);
       } catch (e) {
-        logError('Error occurred while retrieving streamer data in the uptime command', fileName);
-        logError(e, fileName);
+        logError(e);
       }
 
       let uptimeOutput = '';
@@ -345,12 +351,10 @@ const commands = {
 
   //nqny: new TwitchCommand('nqny', "December 30th is Not Quite New Years: Round 3! Starting at 2PM eastern I'll be streaming for twelve hours as a celebration for this past year of streams and party with chat! We've got a bunch of fun planed such as Chat Superlatives, Best & Worst of the Year tier lists, Beating GOTY Elden Ring, Steam Giftcard Giveaways, and more!"),
 
-  // donate: new TwitchCommand('donate', "For $5 you get a random doodle, at $15 you get to choose what I draw for you (sfw). You can only get 2 drawings per donation. I'll do these in a bad art stream near the end of the month. If you'd like to donate to support the National Children's Alliance and their campaign against child abuse, click here: https://donate.tiltify.com/@bexxters/itsyourbusiness Thank you for your generosity!"),
+  // donate: new TwitchCommand('donate', "If you'd like to donate to support the National Multiple Sclerosis Society and their campaign to cure MS, click here: https://donate.tiltify.com/@bexxters/stream-to-end-ms-2023 Thank you for your generosity!"),
 
   // nca: new TwitchCommand('nca', "Child abuse thrives when good people decide its none of their business. Throughout the month of April, we will be raising funds for The National Children's Alliance. The NCA maintains thousands of Child Advocacy Centers - safe havens for children to grow, recover, and achieve justice. Find out more about how the NCA helps children here: https://www.nationalchildrensalliance.org"),
 
   // ms: new TwitchCommand('ms', "Multiple Sclerosis is a disease that impacts the nervous system. It causes the immune system to damage myelin, the coating of our nerve fibers. This causes an array symptoms such as numbness, tingling, mood changes, memory problems, pain, fatigue, or in extreme cases - blindness and/or paralysis. There is currently no known cause or cure."),
 
 };
-
-module.exports = { commands };

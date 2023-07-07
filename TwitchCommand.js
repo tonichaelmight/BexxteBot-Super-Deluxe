@@ -1,10 +1,9 @@
 // if you're trying to make a new command, this is the right page; scroll down a bit further
-const { logError } = require('./utils.js');
-const fileName = require('path').basename(__filename);
-const { readFileSync, writeFileSync } = require('fs');
+import { logError } from './utils.js';
+import { readFileSync, writeFileSync } from 'fs';
 
 // Basic commands will yield the same output every time they are executed -- foundation for more specialized command types
-class TwitchCommand {
+export class TwitchCommand {
 
   constructor(name, commandText, options={}) {
     this.name = name;
@@ -47,14 +46,13 @@ class TwitchCommand {
     try {
       messageObject.addResponse(this.commandText);
     } catch (e) {
-      logError(`Problem executing the ${this.name} command`, fileName);
-      logError(e, fileName);
+      logError(e);
     }
   }
 }
 
 // Commands that do more than just yield the same text every time
-class TwitchCallbackCommand extends TwitchCommand {
+export class TwitchCallbackCommand extends TwitchCommand {
 
   constructor(name, callback, options={}) {
     super(name, undefined, options);
@@ -82,8 +80,7 @@ class TwitchCallbackCommand extends TwitchCommand {
       
     } catch (e) {
 
-      logError(`Problem executing the ${this.name} command`, fileName);
-      logError(e, fileName);
+      logError(e);
 
     }
   }
@@ -91,7 +88,7 @@ class TwitchCallbackCommand extends TwitchCommand {
 }
 
 // Commands that use an asynchronous callback function
-class AsyncTwitchCallbackCommand extends TwitchCallbackCommand {
+export class AsyncTwitchCallbackCommand extends TwitchCallbackCommand {
 
   constructor(name, callback, options={}) {
     super(name, callback, options);
@@ -114,8 +111,7 @@ class AsyncTwitchCallbackCommand extends TwitchCallbackCommand {
 
     } catch (e) {
 
-      logError(`Problem executing the ${this.name} command`, fileName);
-      logError(e, fileName);
+      logError(e);
 
     }
 
@@ -123,7 +119,7 @@ class AsyncTwitchCallbackCommand extends TwitchCallbackCommand {
 
 }
 
-class TwitchCounterCommand extends TwitchCommand {
+export class TwitchCounterCommand extends TwitchCommand {
 
   // Current work
   constructor(name, outputs, options={}) {
@@ -229,10 +225,7 @@ class TwitchCounterCommand extends TwitchCommand {
       messageObject.addResponse(this.outputs[evaluation.action](evaluation));
       return;
     } catch (e) {
-      logError(`Problem executing the ${this.name} command`, fileName);
-      logError(e, fileName);
+      logError(e);
     }
   }
 }
-
-module.exports = { TwitchCommand, TwitchCallbackCommand, AsyncTwitchCallbackCommand, TwitchCounterCommand };

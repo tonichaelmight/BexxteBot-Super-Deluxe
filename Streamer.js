@@ -1,9 +1,8 @@
-const ev = require('./ev.js');
-const https = require('https');
-const { logError } = require('./utils.js');
-const fileName = require('path').basename(__filename);
+import { BEXXTEBOT_TOKEN, CLIENT_ID } from './ev.js';
+import https from 'https';
+import { logError } from './utils.js';
 
-class Streamer {
+export default class Streamer {
 
   constructor(username, commands, timers, config, bot) {
     this.username = username.startsWith('#') ? username.slice(1) : username;
@@ -46,8 +45,8 @@ class Streamer {
       method: 'GET',
       path: `/helix/search/channels?query=${streamer}`,
       headers: {
-        'Authorization': `Bearer ${ev.BEXXTEBOT_TOKEN}`,
-        'Client-id': ev.CLIENT_ID
+        'Authorization': `Bearer ${BEXXTEBOT_TOKEN}`,
+        'Client-id': CLIENT_ID
       }
     }
 
@@ -86,7 +85,7 @@ class Streamer {
           // if the data comes in multiple chunks, the initial attempts will fail since the data is incomplete. Throws "SyntaxError: Unexpected end of JSON input"
           // this can be ignored
           if (!(e.name === 'SyntaxError' && e.message === 'Unexpected end of JSON input')) {
-            logError(e, fileName);
+            logError(e);
           }
         }
 
@@ -95,7 +94,7 @@ class Streamer {
     });
 
     channelInfoRequest.on('error', error => {
-      logError(error, fileName);
+      logError(error);
     })
 
     channelInfoRequest.end();
@@ -123,5 +122,3 @@ class Streamer {
   }
 
 }
-
-module.exports = { Streamer };

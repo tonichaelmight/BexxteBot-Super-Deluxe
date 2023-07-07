@@ -1,7 +1,7 @@
-const { TwitchMessage } = require('./TwitchMessage.js');
+import TwitchMessage from './TwitchMessage.js';
 
 // TIMER CLASS
-class Timer {
+export default class Timer {
   constructor(min, range, options={}) {
     this.min = min;
     this.range = range;
@@ -74,5 +74,3 @@ class Timer {
     }
   }
 }
-
-module.exports = { Timer };
