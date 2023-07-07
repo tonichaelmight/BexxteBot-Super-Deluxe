@@ -1,7 +1,6 @@
-const ev = require('./ev.js');
-const { TwitchResponse } = require('./TwitchResponse.js');
+import TwitchResponse from './TwitchResponse.js';
 
-class TwitchMessage {
+export default class TwitchMessage {
   constructor(channel, tags, message, self) {
     this.channel = channel;
     this.tags = tags;
@@ -37,8 +36,6 @@ class TwitchMessage {
   }
 
 }
-
-module.exports = { TwitchMessage };
 
 /*
 TwitchMessage {

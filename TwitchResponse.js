@@ -1,4 +1,4 @@
-class TwitchResponse {
+export default class TwitchResponse {
   
   constructor(output, mean=false) {
     if (!output) throw new Error('A TwitchResponse\'s output cannot be empty');
@@ -7,5 +7,3 @@ class TwitchResponse {
   }
 
 }
-
-module.exports = { TwitchResponse }

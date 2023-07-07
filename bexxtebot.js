@@ -3,18 +3,18 @@
 // at the bottom of this page is what makes it all go
 
 // REQUIRES
-const ev = require('./ev.js'); // environment variables
-const { logError } = require('./utils.js');
-const fileName = require('path').basename(__filename);
+import { BOT_NAME, BROADCASTING_CHANNELS, BEXXTEBOT_TOKEN } from './ev.js'; // environment variables
+import { logError } from './utils.js';
+import path from 'path';
 
 //const discord = require('discord.js');
-const { Bot } = require('./Bot.js');
+import Bot from './Bot.js';
 
 // THE QUEEN AND LEGEND HERSELF
-const bexxteBot = new Bot(ev.BOT_NAME, ev.BROADCASTING_CHANNELS, ev.BEXXTEBOT_TOKEN);
+const bexxteBot = new Bot(BOT_NAME, BROADCASTING_CHANNELS, BEXXTEBOT_TOKEN);
 
 try {
   bexxteBot.run();
-} catch(e){
-  logError(e, fileName);
+} catch (e) {
+  logError(e);
 }

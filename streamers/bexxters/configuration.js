@@ -1,26 +1,26 @@
-bexxteConfig = {
+const bexxteConfig = {
 
   channelName: 'bexxters',
 
   botName: 'bexxtebot',
 
   schedule: {
-    SUN: "Dreams In The Witch House",
-    MON: "Vampyr",
-    TUES: "Monster Prom",
-    WEDS: "Vampyr",
-    THURS: "Tales/Fortnite",
+    SUN: "Night Security",
+    MON: "Coming Out on Top (discord)",
+    TUES: "Peppa Pig runs",
+    WEDS: "Crisis Core Remake",
+    THURS: "Tales/???",
     FRI: "",
     SAT: ""
   },
 
-  playlist: 'https://www.youtube.com/watch?v=rc53oCjqu-U',
+  playlist: 'https://www.youtube.com/watch?v=sEkH_cJacbA',
 
   contentWarning: '',
 
   discordServerLink: 'https://discord.gg/bdMQHsd',
 
-  newvid: 'https://youtu.be/QQTXHVIl7Ig',
+  newvid: 'https://youtu.be/f_abepmhtMk',
 
   highlights: 'https://youtu.be/yc9XvBGVg64',
 
@@ -29,12 +29,10 @@ bexxteConfig = {
     'prime',
     'follow',
     'sub',
-    'bexxtebot',
     'bttv',
     'schedule',
-    'pride',
-    'youtube', 
-    'newvid', 
+    'socials',
+    'newvid',
   ],
 
   quotes: [
@@ -121,4 +119,4 @@ bexxteConfig = {
 
 }
 
-module.exports = { bexxteConfig, config: bexxteConfig};
+export { bexxteConfig, bexxteConfig as config };

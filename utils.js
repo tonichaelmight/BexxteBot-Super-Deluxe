@@ -1,18 +1,21 @@
-const fs = require('fs');
+import fs from 'fs';
 
-const logError = (errorMessage, fileName) => {
+const writeToErrorFile = (content) => {
+  fs.appendFile('error.txt', content, appendError => {
+    if (appendError) throw appendError;
+  });
+}
+
+export const logError = (error) => {
   try {
     const currentDateAndTime = new Date().toLocaleString('en-US', { timeZone: 'UTC', timeZoneName: 'short' });
-    const datePlusError = `\n${fileName} :: ${currentDateAndTime} :: ${errorMessage}\n`;
-    fs.appendFile('error.txt', datePlusError, appendError => {
-      if (appendError) throw appendError;
-    });
+    const datePlusError = `${currentDateAndTime} \n${error.stack}\n`;
+    
+    writeToErrorFile(datePlusError);
+    writeToErrorFile('-------------------------------------\n');
+    
   } catch (innerError) {
     console.log('an error occurred while trying to log an error :/');
     console.log(innerError);
   }
-}
-
-module.exports = {
-  logError
 }

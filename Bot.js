@@ -1,11 +1,10 @@
-const twitch = require('tmi.js'); // twitch tingz
-const { logError } = require('./utils.js');
-const fileName = require('path').basename(__filename);
+import twitch from 'tmi.js';
+import { logError } from './utils.js';
 
-const { TwitchMessage } = require('./TwitchMessage.js');
-const { Streamer } = require('./Streamer.js');
+import TwitchMessage from './TwitchMessage.js';
+import Streamer from './Streamer.js';
 
-class Bot {
+export default class Bot {
   constructor(name, channels, token) {
     this.name = name;
     this.channels = channels;
@@ -13,10 +12,10 @@ class Bot {
 
     this.streamers = {};
 
-    this.channels.forEach(channel => {
-      const { commands } = require(`./streamers/${channel}/commands.js`);
-      const { timers } = require(`./streamers/${channel}/timers.js`);
-      const { config } = require(`./streamers/${channel}/configuration.js`);
+    this.channels.forEach(async channel => {
+      const { commands } = await import(`./streamers/${channel}/commands.js`);
+      const { timers } = await import(`./streamers/${channel}/timers.js`);
+      const { config } = await import(`./streamers/${channel}/configuration.js`);
       this.streamers[channel] = new Streamer(channel, commands, timers, config, this);
     });
   }
@@ -52,8 +51,7 @@ class Bot {
 
       } catch (error) {
 
-        logError(`Error encountered while processing a Twitch Message in ${channel}`, fileName);
-        logError(error, fileName);
+        logError(error);
 
       }
 
@@ -163,8 +161,7 @@ class Bot {
       try {
         this.speakInTwitch(twitchMessage);
       } catch (e) {
-        logError('Probably attempted to say an undefined message', fileName);
-        logError(e, fileName);
+        logError(e);
       }
       return;
     }
@@ -179,14 +176,14 @@ class Bot {
     }
   }
 
-  // top level command -- this is run directly in bexxtebot.js
+  // top level command -- this is called directly in bexxtebot.js
   run() {
     try {
       this.establishTwitchClient();
       //this.establishDiscordClient();
       this.startTimers();
     } catch(e) {
-      logError(e, fileName);
+      logError(e);
     }
   }
 
@@ -216,5 +213,3 @@ class Bot {
   */
 
 }
-
-module.exports = { Bot };
