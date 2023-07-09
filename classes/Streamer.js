@@ -1,6 +1,6 @@
-import { BEXXTEBOT_TOKEN, CLIENT_ID } from './ev.js';
+import { BEXXTEBOT_TOKEN, CLIENT_ID } from '../ev.js';
 import https from 'https';
-import { logError } from './utils.js';
+import { logError } from '../utils.js';
 
 export default class Streamer {
 

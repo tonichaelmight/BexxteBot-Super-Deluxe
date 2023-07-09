@@ -119,4 +119,5 @@ const bexxteConfig = {
 
 }
 
-export { bexxteConfig, bexxteConfig as config };
+export default bexxteConfig;
+export { bexxteConfig as config };

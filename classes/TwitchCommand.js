@@ -1,5 +1,5 @@
 // if you're trying to make a new command, this is the right page; scroll down a bit further
-import { logError } from './utils.js';
+import { logError } from '../utils.js';
 import { readFileSync, writeFileSync } from 'fs';
 
 // Basic commands will yield the same output every time they are executed -- foundation for more specialized command types

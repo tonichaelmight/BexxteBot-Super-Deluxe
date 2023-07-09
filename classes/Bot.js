@@ -1,23 +1,16 @@
 import twitch from 'tmi.js';
-import { logError } from './utils.js';
+import { logError } from '../utils.js';
 
 import TwitchMessage from './TwitchMessage.js';
 import Streamer from './Streamer.js';
 
 export default class Bot {
-  constructor(name, channels, token) {
+  constructor(name, channel, token, commands, timers, config) {
     this.name = name;
-    this.channels = channels;
+    this.channel = channel;
     this.token = token;
 
-    this.streamers = {};
-
-    this.channels.forEach(async channel => {
-      const { commands } = await import(`./streamers/${channel}/commands.js`);
-      const { timers } = await import(`./streamers/${channel}/timers.js`);
-      const { config } = await import(`./streamers/${channel}/configuration.js`);
-      this.streamers[channel] = new Streamer(channel, commands, timers, config, this);
-    });
+    this.streamer = new Streamer(this.channel, commands, timers, config, this);
   }
 
   // estabishes a client that can read and send messages from/to Twitch
@@ -34,7 +27,7 @@ export default class Bot {
         username: this.name,
         password: this.token
       },
-      channels: this.channels
+      channels: [this.channel]
     });
 
     this.twitchClient.connect();
@@ -98,9 +91,9 @@ export default class Bot {
 
   async executeTwitchCommand(twitchMessage, command) {
     // check if command exists for streamer
-    if (this.streamers[twitchMessage.channel.slice(1)].commands[command]) {
+    if (this.streamer.commands[command]) {
       // call the command's execute() method
-      await this.streamers[twitchMessage.channel.slice(1)].commands[command].execute(twitchMessage);
+      await this.streamer.commands[command].execute(twitchMessage);
     }
   }
 
@@ -169,11 +162,9 @@ export default class Bot {
 
   startTimers() {
     //console.log(this.streamers);
-    for (const streamer in this.streamers) {
-      this.streamers[streamer].timers.forEach(timer => {
+      this.streamer.timers.forEach(timer => {
         timer.start();
       })
-    }
   }
 
   // top level command -- this is called directly in bexxtebot.js
@@ -182,7 +173,7 @@ export default class Bot {
       this.establishTwitchClient();
       //this.establishDiscordClient();
       this.startTimers();
-    } catch(e) {
+    } catch (e) {
       logError(e);
     }
   }

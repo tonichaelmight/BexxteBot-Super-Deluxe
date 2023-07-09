@@ -1,9 +1,9 @@
-import { logError } from '../../utils.js';
-import { TwitchCommand, TwitchCallbackCommand, AsyncTwitchCallbackCommand, TwitchCounterCommand } from '../../TwitchCommand.js';
-import Streamer from '../../Streamer.js';
-import { bexxteConfig } from './configuration.js';
+import { logError } from './utils.js';
+import { TwitchCommand, TwitchCallbackCommand, AsyncTwitchCallbackCommand, TwitchCounterCommand } from './classes/TwitchCommand.js';
+import Streamer from './classes/Streamer.js';
+import bexxteConfig from './configuration.js';
 
-export const commands = {
+const commands = {
 
   // BASIC COMMANDS
 
@@ -20,7 +20,7 @@ export const commands = {
   follow: new TwitchCommand('follow', 'Hit the <3 to follow and get notified whenever I go live! It also makes my cold heart a little bit warmer!'),
 
   newvid: new TwitchCommand('newvid', `Check out the most recent upload! ${bexxteConfig.newvid}`),
-  
+
   highlights: new TwitchCommand('highlights', `Check out our monthly highlight video! ${bexxteConfig.highlights}`),
 
   prime: new TwitchCommand('prime', 'Link your amazon prime to twitch to get a free sub every month and put those Bezos Bucks to work'),
@@ -44,7 +44,7 @@ export const commands = {
 
   goals: new TwitchCommand('goals', "I'm looking to hit 600 followers by the end of the year! So if you're enjoying what you see, feel free to hit the heart to help me get there! bexxteLove"),
 
-  tap: new TwitchCommand('tap',"No Backseating, No Spoilers, No 'it's just a suggestion/what I did' type comments to get around that. Don't make Mods Tap the Sign again."),
+  tap: new TwitchCommand('tap', "No Backseating, No Spoilers, No 'it's just a suggestion/what I did' type comments to get around that. Don't make Mods Tap the Sign again."),
 
   //alerts: new TwitchCommand('alerts', "We have scare alerts at all bit amounts up to 900! There's also channel point scares! Happy Halloween - do your worst peepoTreat"),
 
@@ -221,7 +221,7 @@ export const commands = {
           output = `Couldn't find a channel named "${recipient}"`;
           return output;
         }
-        
+
         logError(e);
       }
 
@@ -358,3 +358,5 @@ export const commands = {
   // ms: new TwitchCommand('ms', "Multiple Sclerosis is a disease that impacts the nervous system. It causes the immune system to damage myelin, the coating of our nerve fibers. This causes an array symptoms such as numbness, tingling, mood changes, memory problems, pain, fatigue, or in extreme cases - blindness and/or paralysis. There is currently no known cause or cure."),
 
 };
+
+export default commands;

@@ -1,5 +1,13 @@
 {
   "files": {
+    "bexxtebot.js": [
+      {
+        "id": "a6294179-2ca6-4ac0-9a04-98225ec1397b",
+        "line": 4,
+        "version": 554,
+        "index": 186
+      }
+    ],
     "twitch-commands.js": [
       {
         "id": "8b7bbefc-db14-4e26-baf7-2f6d54884c5d",
